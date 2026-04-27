@@ -1,0 +1,89 @@
+from fastapi.testclient import TestClient
+
+from civicpermit.intake_review import review_intake_readiness
+from civicpermit.main import app
+from civicpermit.records_export import build_policy_export
+from civicpermit.requirement_lookup import lookup_permit_requirement
+from civicpermit.submittal_outline import draft_submittal_outline
+
+
+client = TestClient(app)
+
+
+def test_requirement_lookup_returns_actionable_checklist() -> None:
+    result = lookup_permit_requirement(project_type="ADU", location_context="R-2 parcel")
+    assert result.requirement_id == "permit-adu-1.0"
+    assert "Site plan" in result.required_materials[0]
+    assert "does not approve permits" in result.disclaimer
+
+
+def test_intake_review_keeps_completeness_boundary() -> None:
+    result = review_intake_readiness(
+        proposal="ADU at 100 Main Street with site plan, project description, contact email, and parcel.",
+        project_type="adu",
+    )
+    assert result.status == "ready-for-staff-triage"
+    assert result.missing_or_unclear == ()
+    assert "formal application" in result.next_step
+
+
+def test_submittal_outline_requires_staff_review() -> None:
+    result = draft_submittal_outline(
+        project_name="Backyard ADU",
+        proposal="ADU at 100 Main Street with site plan.",
+        project_type="adu",
+    )
+    assert result.heading == "Pre-application intake outline for Backyard ADU"
+    assert result.review_required is True
+    assert "official application type" in result.applicant_message
+
+
+def test_permit_export_preserves_records_context() -> None:
+    result = build_policy_export(title="Backyard ADU Intake", project_type="adu")
+    assert result.title == "Backyard ADU Intake"
+    assert result.project_type == "adu"
+    assert "Preserve applicant-provided proposal text." in result.checklist
+    assert "municipal permit intake record" in result.retention_note
+
+
+def test_requirement_lookup_api_success_shape() -> None:
+    response = client.post(
+        "/api/v1/civicpermit/requirements/lookup",
+        json={"project_type": "commercial tenant", "location_context": "downtown"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["requirement_id"] == "permit-commercial-tenant-2.0"
+    assert payload["required_materials"]
+    assert payload["disclaimer"]
+
+
+def test_intake_and_submittal_apis() -> None:
+    intake = client.post(
+        "/api/v1/civicpermit/intake/review",
+        json={"proposal": "ADU at 100 Main with site plan and contact email.", "project_type": "adu"},
+    )
+    outline = client.post(
+        "/api/v1/civicpermit/submittal/outline",
+        json={
+            "project_name": "Backyard ADU",
+            "proposal": "ADU at 100 Main with site plan.",
+            "project_type": "adu",
+        },
+    )
+    assert intake.status_code == 200
+    assert intake.json()["status"] == "needs-applicant-follow-up"
+    assert outline.status_code == 200
+    assert outline.json()["review_required"] is True
+
+
+def test_public_ui_route_is_accessible_and_honest() -> None:
+    response = client.get("/civicpermit")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]
+    text = response.text
+    assert '<a class="skip-link" href="#main">Skip to main content</a>' in text
+    assert '<main id="main" tabindex="-1">' in text
+    assert "v0.1.0 permit intake foundation" in text
+    assert "does not approve permits" in text
+    assert "permitting system of record" in text
