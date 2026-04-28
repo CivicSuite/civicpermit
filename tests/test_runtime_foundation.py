@@ -18,7 +18,8 @@ def test_root_endpoint_states_runtime_boundary() -> None:
 
     assert payload["name"] == "CivicPermit"
     assert payload["version"] == "0.1.1"
-    assert payload["status"] == "permit intake foundation"
+    assert payload["status"] == "permit intake foundation plus intake persistence"
+    assert "database-backed requirement and intake records" in payload["message"]
     assert "permit approvals" in payload["message"]
     assert "not implemented yet" in payload["message"]
     assert payload["next_step"].startswith("Post-v0.1.1 roadmap")
