@@ -1,4 +1,4 @@
-"""Deterministic permit requirement lookup helpers for CivicPermit v0.1.0."""
+"""Deterministic permit requirement lookup helpers for CivicPermit v0.1.1."""
 
 from __future__ import annotations
 
