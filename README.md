@@ -2,7 +2,7 @@
 
 CivicPermit is the CivicSuite module for permit pre-application and development-review intake support.
 
-Current state: **v0.1.1 permit intake foundation release**. This repo ships a FastAPI package aligned to `civiccore==0.3.0`, health/root endpoints, documentation gates, deterministic sample permit requirement lookup, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at `/civicpermit`. It does **not** ship permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit application ingestion, permitting-system integrations, or production staff-review queues.
+Current state: **v0.1.1 permit intake foundation release plus production-depth intake persistence slice**. This repo ships a FastAPI package aligned to `civiccore==0.3.0`, health/root endpoints, documentation gates, deterministic sample permit requirement lookup, optional database-backed requirement and intake records via `CIVICPERMIT_INTAKE_DB_URL`, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at `/civicpermit`. It does **not** ship permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit application ingestion, permitting-system integrations, or production staff-review queues.
 
 ## What CivicPermit Does
 
@@ -29,8 +29,11 @@ bash scripts/verify-release.sh
 - `GET /civicpermit` returns the accessible public sample UI.
 - `POST /api/v1/civicpermit/requirements/lookup` returns a sample permit requirement checklist.
 - `POST /api/v1/civicpermit/intake/review` returns sample intake-readiness factors.
+- `GET /api/v1/civicpermit/intake/{intake_id}` retrieves persisted intake records when `CIVICPERMIT_INTAKE_DB_URL` is configured.
 - `POST /api/v1/civicpermit/submittal/outline` returns a reviewed-required submittal outline.
 - `POST /api/v1/civicpermit/export` returns a records-ready permit-intake export checklist.
+
+Set `CIVICPERMIT_INTAKE_DB_URL` to enable persistent permit requirement and intake review records. When unset, CivicPermit continues to use deterministic in-memory sample data.
 
 ## License
 
