@@ -54,7 +54,7 @@ def root() -> dict[str, str]:
             "CivicPermit package, API foundation, sample permit requirement lookup, intake-readiness review, submittal outline helper, records-ready export checklist, and public UI foundation are online; "
             "permit approvals, official completeness determinations, fee calculations, inspections, live GIS, live LLM calls, and permitting-system-of-record integrations are not implemented yet."
         ),
-        "next_step": "Post-v0.1.0 roadmap: local permit type configuration, CivicZone/CivicCode context APIs, and staff review queues",
+        "next_step": "Post-v0.1.1 roadmap: local permit type configuration, CivicZone/CivicCode context APIs, and staff review queues",
     }
 
 

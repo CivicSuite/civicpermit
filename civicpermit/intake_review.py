@@ -1,4 +1,4 @@
-"""Permit intake-readiness helpers for CivicPermit v0.1.0."""
+"""Permit intake-readiness helpers for CivicPermit v0.1.1."""
 
 from __future__ import annotations
 

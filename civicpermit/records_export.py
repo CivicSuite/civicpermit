@@ -1,4 +1,4 @@
-"""Records-ready export helpers for CivicPermit v0.1.0."""
+"""Records-ready export helpers for CivicPermit v0.1.1."""
 
 from __future__ import annotations
 

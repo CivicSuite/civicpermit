@@ -18,7 +18,7 @@ PLACEHOLDERS = {
     "verification",
 }
 
-SOURCE_ROOT = Path("CivicPermit")
+SOURCE_ROOT = Path("civicpermit")
 PATTERN = re.compile(r"^\s*(?:from|import)\s+civiccore\.([a-z_]+)", re.MULTILINE)
 
 
@@ -32,7 +32,7 @@ def main() -> int:
             package = match.group(1)
             if package in PLACEHOLDERS:
                 failures.append(
-                    f"{path}: civiccore.{package} is a placeholder package in v0.2.0. "
+                    f"{path}: civiccore.{package} is a placeholder package in v0.3.0. "
                     "See AGENTS.md section 3.1."
                 )
 
@@ -48,4 +48,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

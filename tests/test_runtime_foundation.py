@@ -7,8 +7,8 @@ from civicpermit.main import app
 client = TestClient(app)
 
 
-def test_package_version_is_010() -> None:
-    assert civicpermit.__version__ == "0.1.0"
+def test_package_version_is_011() -> None:
+    assert civicpermit.__version__ == "0.1.1"
 
 
 def test_root_endpoint_states_runtime_boundary() -> None:
@@ -17,11 +17,11 @@ def test_root_endpoint_states_runtime_boundary() -> None:
     payload = response.json()
 
     assert payload["name"] == "CivicPermit"
-    assert payload["version"] == "0.1.0"
+    assert payload["version"] == "0.1.1"
     assert payload["status"] == "permit intake foundation"
     assert "permit approvals" in payload["message"]
     assert "not implemented yet" in payload["message"]
-    assert payload["next_step"].startswith("Post-v0.1.0 roadmap")
+    assert payload["next_step"].startswith("Post-v0.1.1 roadmap")
 
 
 def test_health_endpoint_reports_versions() -> None:
@@ -31,5 +31,5 @@ def test_health_endpoint_reports_versions() -> None:
 
     assert payload["status"] == "ok"
     assert payload["service"] == "civicpermit"
-    assert payload["version"] == "0.1.0"
-    assert payload["civiccore_version"] == "0.2.0"
+    assert payload["version"] == "0.1.1"
+    assert payload["civiccore_version"] == "0.3.0"
