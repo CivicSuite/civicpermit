@@ -15,12 +15,12 @@ CivicPermit is a FastAPI Python package pinned to `civiccore==1.0.0`. The curren
 - `GET /civicpermit`
 - `POST /api/v1/civicpermit/requirements/lookup`
 - `POST /api/v1/civicpermit/context/development-review`
-- `POST /api/v1/civicpermit/intake/review`; persisted records require `X-CivicPermit-Role: staff` when `CIVICPERMIT_INTAKE_DB_URL` is configured
-- `GET /api/v1/civicpermit/intake/{intake_id}` when `CIVICPERMIT_INTAKE_DB_URL` is configured and `X-CivicPermit-Role: staff` is present
+- `POST /api/v1/civicpermit/intake/review`; persisted records require `X-CivicPermit-Role: staff` and `X-CivicPermit-Staff-Key` when `CIVICPERMIT_INTAKE_DB_URL` is configured
+- `GET /api/v1/civicpermit/intake/{intake_id}` when `CIVICPERMIT_INTAKE_DB_URL` and `CIVICPERMIT_STAFF_API_KEY` are configured and both staff headers are present
 - `POST /api/v1/civicpermit/submittal/outline`
 - `POST /api/v1/civicpermit/export`
 
-Set `CIVICPERMIT_INTAKE_DB_URL` to persist permit requirement and intake review records. Persisted intake create/read routes are staff-only and require `X-CivicPermit-Role: staff` from a trusted staff or service workflow. Leave it unset for deterministic sample behavior.
+Set `CIVICPERMIT_INTAKE_DB_URL` to persist permit requirement and intake review records. Persisted intake create/read routes are staff-only and require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff or service workflow. Leave it unset for deterministic sample behavior.
 
 Run local verification with:
 

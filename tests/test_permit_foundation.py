@@ -126,6 +126,22 @@ def test_development_review_context_returns_review_required_contract() -> None:
     assert "system-of-record action" in payload["boundary"]
 
 
+def test_development_review_context_rejects_unsupported_summary_fields() -> None:
+    response = client.post(
+        "/api/v1/civicpermit/context/development-review",
+        json={
+            "project_type": "adu",
+            "proposal": "ADU at 100 Main with site plan and contact email.",
+            "zoning_context_summary": "R-2 allows ADU subject to staff review.",
+        },
+    )
+
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert "zoning_context_summary" in detail["fields"]
+    assert "fields array" in detail["fix"]
+
+
 def test_public_ui_route_is_accessible_and_honest() -> None:
     response = client.get("/civicpermit")
     assert response.status_code == 200

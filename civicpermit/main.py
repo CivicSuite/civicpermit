@@ -1,13 +1,14 @@
 """FastAPI runtime foundation for CivicPermit."""
 
 import os
+from hmac import compare_digest
 from typing import Annotated
 
 from civiccore import __version__ as CIVICCORE_VERSION
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from civicpermit import __version__
 from civicpermit.intake_review import review_intake_readiness
@@ -39,13 +40,13 @@ class IntakeReviewRequest(BaseModel):
 
 
 class DevelopmentReviewContextRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     project_type: str = Field(min_length=1, max_length=255)
     proposal: str = Field(min_length=1, max_length=5000)
     location_context: str = Field(default="", max_length=500)
     zoning_context_id: str | None = Field(default=None, max_length=160)
     code_context_id: str | None = Field(default=None, max_length=160)
-    zoning_context_summary: str | None = Field(default=None, max_length=1000)
-    code_context_summary: str | None = Field(default=None, max_length=1000)
 
 
 class SubmittalOutlineRequest(BaseModel):
@@ -135,9 +136,10 @@ def requirement_lookup(request: RequirementLookupRequest) -> dict[str, object]:
 def intake_review(
     request: IntakeReviewRequest,
     x_civicpermit_role: Annotated[str | None, Header()] = None,
+    x_civicpermit_staff_key: Annotated[str | None, Header()] = None,
 ) -> dict[str, object]:
     if _intake_database_url() is not None:
-        _require_staff_role(x_civicpermit_role)
+        _require_staff_role(x_civicpermit_role, x_civicpermit_staff_key)
         stored = _get_intake_repository().create_intake_review(
             proposal=request.proposal,
             project_type=request.project_type,
@@ -187,6 +189,7 @@ def development_review_context(request: DevelopmentReviewContextRequest) -> dict
 def get_intake_review(
     intake_id: str,
     x_civicpermit_role: Annotated[str | None, Header()] = None,
+    x_civicpermit_staff_key: Annotated[str | None, Header()] = None,
 ) -> dict[str, object]:
     if _intake_database_url() is None:
         raise HTTPException(
@@ -196,7 +199,7 @@ def get_intake_review(
                 "fix": "Set CIVICPERMIT_INTAKE_DB_URL to retrieve persisted intake review records.",
             },
         )
-    _require_staff_role(x_civicpermit_role)
+    _require_staff_role(x_civicpermit_role, x_civicpermit_staff_key)
     stored = _get_intake_repository().get_intake_review(intake_id)
     if stored is None:
         raise HTTPException(
@@ -252,14 +255,23 @@ def _dispose_intake_repository() -> None:
         _intake_repository = None
 
 
-def _require_staff_role(role: str | None) -> None:
-    if role == "staff":
+def _require_staff_role(role: str | None, staff_key_header: str | None) -> None:
+    staff_key = os.environ.get("CIVICPERMIT_STAFF_API_KEY")
+    if not staff_key:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "message": "CivicPermit persisted intake access is not configured.",
+                "fix": "Set CIVICPERMIT_STAFF_API_KEY before enabling persisted intake create/read routes.",
+            },
+        )
+    if role == "staff" and staff_key_header is not None and compare_digest(staff_key_header, staff_key):
         return
     raise HTTPException(
         status_code=403,
         detail={
             "message": "Persisted CivicPermit intake records require staff access.",
-            "fix": "Send X-CivicPermit-Role: staff from a trusted staff or service workflow when intake persistence is enabled.",
+            "fix": "Send X-CivicPermit-Role: staff and X-CivicPermit-Staff-Key from a trusted staff or service workflow when intake persistence is enabled.",
         },
     )
 

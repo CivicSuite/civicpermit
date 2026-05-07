@@ -37,6 +37,7 @@ def test_requirement_and_intake_records_persist(tmp_path) -> None:
 def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
     db_path = tmp_path / "api-intake-records.db"
     monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+    monkeypatch.setenv("CIVICPERMIT_STAFF_API_KEY", "test-staff-key")
 
     try:
         requirement_response = client.post(
@@ -49,12 +50,18 @@ def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
                 "proposal": "ADU at 100 Main Street with site plan, project description, contact email, and parcel.",
                 "project_type": "adu",
             },
-            headers={"X-CivicPermit-Role": "staff"},
+            headers={
+                "X-CivicPermit-Role": "staff",
+                "X-CivicPermit-Staff-Key": "test-staff-key",
+            },
         )
         intake_id = create_response.json()["intake_id"]
         get_response = client.get(
             f"/api/v1/civicpermit/intake/{intake_id}",
-            headers={"X-CivicPermit-Role": "staff"},
+            headers={
+                "X-CivicPermit-Role": "staff",
+                "X-CivicPermit-Staff-Key": "test-staff-key",
+            },
         )
     finally:
         main_module._dispose_intake_repository()
@@ -73,6 +80,7 @@ def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
 def test_persisted_intake_requires_staff_role(monkeypatch, tmp_path) -> None:
     db_path = tmp_path / "intake-auth.db"
     monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+    monkeypatch.setenv("CIVICPERMIT_STAFF_API_KEY", "test-staff-key")
 
     try:
         create_response = client.post(
@@ -90,6 +98,55 @@ def test_persisted_intake_requires_staff_role(monkeypatch, tmp_path) -> None:
     assert create_response.status_code == 403
     assert get_response.status_code == 403
     assert "X-CivicPermit-Role: staff" in create_response.json()["detail"]["fix"]
+    assert "X-CivicPermit-Staff-Key" in create_response.json()["detail"]["fix"]
+    db_path.unlink(missing_ok=True)
+
+
+def test_persisted_intake_requires_configured_staff_key(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "intake-missing-key.db"
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+    monkeypatch.delenv("CIVICPERMIT_STAFF_API_KEY", raising=False)
+
+    try:
+        response = client.post(
+            "/api/v1/civicpermit/intake/review",
+            json={
+                "proposal": "ADU at 100 Main Street with site plan.",
+                "project_type": "adu",
+            },
+            headers={"X-CivicPermit-Role": "staff"},
+        )
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert response.status_code == 503
+    assert "Set CIVICPERMIT_STAFF_API_KEY" in response.json()["detail"]["fix"]
+    db_path.unlink(missing_ok=True)
+
+
+def test_persisted_intake_rejects_spoofed_staff_key(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "intake-wrong-key.db"
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+    monkeypatch.setenv("CIVICPERMIT_STAFF_API_KEY", "real-key")
+
+    try:
+        response = client.post(
+            "/api/v1/civicpermit/intake/review",
+            json={
+                "proposal": "CONFIDENTIAL: pre-application acquisition inquiry.",
+                "project_type": "adu",
+            },
+            headers={
+                "X-CivicPermit-Role": "staff",
+                "X-CivicPermit-Staff-Key": "wrong-key",
+            },
+        )
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert response.status_code == 403
     db_path.unlink(missing_ok=True)
 
 

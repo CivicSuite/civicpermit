@@ -13,13 +13,13 @@ Core API:
 - GET /civicpermit
 - POST /api/v1/civicpermit/requirements/lookup
 - POST /api/v1/civicpermit/context/development-review
-- POST /api/v1/civicpermit/intake/review; persisted records require X-CivicPermit-Role: staff when CIVICPERMIT_INTAKE_DB_URL is configured
-- GET /api/v1/civicpermit/intake/{intake_id} when CIVICPERMIT_INTAKE_DB_URL is configured and X-CivicPermit-Role: staff is present
+- POST /api/v1/civicpermit/intake/review; persisted records require X-CivicPermit-Role: staff and X-CivicPermit-Staff-Key when CIVICPERMIT_INTAKE_DB_URL is configured
+- GET /api/v1/civicpermit/intake/{intake_id} when CIVICPERMIT_INTAKE_DB_URL and CIVICPERMIT_STAFF_API_KEY are configured and both staff headers are present
 - POST /api/v1/civicpermit/submittal/outline
 - POST /api/v1/civicpermit/export
 
 Quickstart: install CivicCore first with python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.0/civiccore-1.0.0-py3-none-any.whl, then run python -m pip install -e ".[dev]".
 
-Set CIVICPERMIT_INTAKE_DB_URL to enable persistent permit requirement and intake review records. Persisted intake create/read routes are staff-only and require X-CivicPermit-Role: staff from a trusted staff or service workflow. When unset, CivicPermit continues to use deterministic in-memory sample data.
+Set CIVICPERMIT_INTAKE_DB_URL to enable persistent permit requirement and intake review records. Persisted intake create/read routes are staff-only and require CIVICPERMIT_STAFF_API_KEY, X-CivicPermit-Role: staff, and matching X-CivicPermit-Staff-Key from a trusted staff or service workflow. When unset, CivicPermit continues to use deterministic in-memory sample data.
 
 Code license: Apache 2.0. Documentation license: CC BY 4.0.
