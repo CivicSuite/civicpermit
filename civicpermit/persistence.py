@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -44,6 +45,28 @@ intake_review_records = sa.Table(
     schema="civicpermit",
 )
 
+staff_review_queue_records = sa.Table(
+    "staff_review_queue_records",
+    metadata,
+    sa.Column("review_id", sa.String(36), primary_key=True),
+    sa.Column("intake_id", sa.String(36), nullable=True),
+    sa.Column("project_type", sa.String(255), nullable=False),
+    sa.Column("proposal", sa.Text(), nullable=False),
+    sa.Column("status", sa.String(80), nullable=False),
+    sa.Column("reason", sa.Text(), nullable=False),
+    sa.Column("assigned_to", sa.String(255), nullable=True),
+    sa.Column("resolution", sa.Text(), nullable=True),
+    sa.Column("created_by", sa.String(255), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
+    schema="civicpermit",
+)
+
+
+OPEN_STAFF_REVIEW_STATUSES = {"open", "in_review"}
+RESOLVED_STAFF_REVIEW_STATUSES = {"resolved", "closed"}
+STAFF_REVIEW_STATUSES = OPEN_STAFF_REVIEW_STATUSES | RESOLVED_STAFF_REVIEW_STATUSES
+
 
 @dataclass(frozen=True)
 class StoredIntakeReview:
@@ -55,6 +78,31 @@ class StoredIntakeReview:
     next_step: str
     disclaimer: str
     created_at: datetime
+
+
+@dataclass(frozen=True)
+class StaffReviewQueueItem:
+    review_id: str
+    intake_id: str | None
+    project_type: str
+    proposal: str
+    status: str
+    reason: str
+    assigned_to: str | None
+    resolution: str | None
+    created_by: str
+    created_at: datetime
+    updated_at: datetime
+    visibility: str = "staff_only"
+
+
+@dataclass(frozen=True)
+class StaffReviewSummary:
+    total_items: int
+    by_status: dict[str, int]
+    open_items: int
+    generated_at: datetime
+    visibility: str = "staff_only"
 
 
 class PermitIntakeRepository:
@@ -99,6 +147,15 @@ class PermitIntakeRepository:
                 )
 
     def lookup_requirement(self, *, project_type: str, location_context: str = "") -> PermitRequirement:
+        requirement, _source = self.lookup_requirement_with_source(
+            project_type=project_type,
+            location_context=location_context,
+        )
+        return requirement
+
+    def lookup_requirement_with_source(
+        self, *, project_type: str, location_context: str = ""
+    ) -> tuple[PermitRequirement, str]:
         normalized = project_type.strip().casefold()
         with self.engine.begin() as connection:
             row = connection.execute(
@@ -110,8 +167,8 @@ class PermitIntakeRepository:
                 )
             ).mappings().first()
         if row is not None:
-            return _row_to_requirement(row)
-        return lookup_permit_requirement(project_type=project_type, location_context=location_context)
+            return _row_to_requirement(row), "configured"
+        return lookup_permit_requirement(project_type=project_type, location_context=location_context), "sample"
 
     def create_intake_review(self, *, proposal: str, project_type: str) -> StoredIntakeReview:
         review = review_intake_readiness(proposal=proposal, project_type=project_type)
@@ -139,6 +196,102 @@ class PermitIntakeRepository:
                 )
             )
         return stored
+
+    def create_staff_review_queue_item(
+        self,
+        *,
+        proposal: str,
+        project_type: str,
+        reason: str,
+        created_by: str,
+        intake_id: str | None = None,
+    ) -> StaffReviewQueueItem:
+        now = datetime.now(UTC)
+        item = StaffReviewQueueItem(
+            review_id=str(uuid4()),
+            intake_id=intake_id,
+            project_type=project_type.strip() or "general",
+            proposal=proposal,
+            status="open",
+            reason=reason,
+            assigned_to=None,
+            resolution=None,
+            created_by=created_by,
+            created_at=now,
+            updated_at=now,
+        )
+        with self.engine.begin() as connection:
+            connection.execute(staff_review_queue_records.insert().values(**_staff_queue_values(item)))
+        return item
+
+    def list_staff_review_queue_items(
+        self, *, status: str | None = None
+    ) -> tuple[StaffReviewQueueItem, ...]:
+        with self.engine.begin() as connection:
+            statement = sa.select(staff_review_queue_records).order_by(
+                staff_review_queue_records.c.created_at
+            )
+            if status is not None:
+                statement = statement.where(staff_review_queue_records.c.status == status)
+            rows = connection.execute(statement).mappings()
+        return tuple(_row_to_staff_queue_item(row) for row in rows)
+
+    def update_staff_review_queue_item(
+        self,
+        *,
+        review_id: str,
+        status: str,
+        assigned_to: str | None,
+        resolution: str | None,
+    ) -> StaffReviewQueueItem | None:
+        if status not in STAFF_REVIEW_STATUSES:
+            raise ValueError("status must be one of: closed, in_review, open, resolved.")
+        if status in RESOLVED_STAFF_REVIEW_STATUSES and not resolution:
+            raise ValueError("resolution is required when resolving or closing a staff review item.")
+        current = self.get_staff_review_queue_item(review_id)
+        if current is None:
+            return None
+        updated = StaffReviewQueueItem(
+            review_id=current.review_id,
+            intake_id=current.intake_id,
+            project_type=current.project_type,
+            proposal=current.proposal,
+            status=status,
+            reason=current.reason,
+            assigned_to=assigned_to if assigned_to is not None else current.assigned_to,
+            resolution=resolution if resolution is not None else current.resolution,
+            created_by=current.created_by,
+            created_at=current.created_at,
+            updated_at=datetime.now(UTC),
+        )
+        with self.engine.begin() as connection:
+            connection.execute(
+                staff_review_queue_records.update()
+                .where(staff_review_queue_records.c.review_id == review_id)
+                .values(**_staff_queue_values(updated))
+            )
+        return updated
+
+    def get_staff_review_queue_item(self, review_id: str) -> StaffReviewQueueItem | None:
+        with self.engine.begin() as connection:
+            row = connection.execute(
+                sa.select(staff_review_queue_records).where(
+                    staff_review_queue_records.c.review_id == review_id
+                )
+            ).mappings().first()
+        if row is None:
+            return None
+        return _row_to_staff_queue_item(row)
+
+    def staff_review_summary(self) -> StaffReviewSummary:
+        items = self.list_staff_review_queue_items()
+        status_counts = Counter(item.status for item in items)
+        return StaffReviewSummary(
+            total_items=len(items),
+            by_status=dict(sorted(status_counts.items())),
+            open_items=sum(1 for item in items if item.status in OPEN_STAFF_REVIEW_STATUSES),
+            generated_at=datetime.now(UTC),
+        )
 
     def get_intake_review(self, intake_id: str) -> StoredIntakeReview | None:
         with self.engine.begin() as connection:
@@ -174,4 +327,37 @@ def _row_to_intake(row: object) -> StoredIntakeReview:
         next_step=data["next_step"],
         disclaimer=data["disclaimer"],
         created_at=data["created_at"],
+    )
+
+
+def _staff_queue_values(item: StaffReviewQueueItem) -> dict[str, object]:
+    return {
+        "review_id": item.review_id,
+        "intake_id": item.intake_id,
+        "project_type": item.project_type,
+        "proposal": item.proposal,
+        "status": item.status,
+        "reason": item.reason,
+        "assigned_to": item.assigned_to,
+        "resolution": item.resolution,
+        "created_by": item.created_by,
+        "created_at": item.created_at,
+        "updated_at": item.updated_at,
+    }
+
+
+def _row_to_staff_queue_item(row: object) -> StaffReviewQueueItem:
+    data = dict(row)
+    return StaffReviewQueueItem(
+        review_id=data["review_id"],
+        intake_id=data["intake_id"],
+        project_type=data["project_type"],
+        proposal=data["proposal"],
+        status=data["status"],
+        reason=data["reason"],
+        assigned_to=data["assigned_to"],
+        resolution=data["resolution"],
+        created_by=data["created_by"],
+        created_at=data["created_at"],
+        updated_at=data["updated_at"],
     )
