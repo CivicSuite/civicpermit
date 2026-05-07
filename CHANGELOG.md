@@ -6,6 +6,19 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-07
+
+### Added
+
+- Staff review queue workflows for persisted deficient intakes, manual staff queue creation, queue listing, status updates, and queue summary counts.
+- Adversarial local integration mock endpoint for CivicZone/CivicCode context, spoofed roles, attempted permit approvals, official fee attempts, stale source context, and partial context failures.
+- v1.0.0 release verification surfaces, WSL verification path, and current-facing docs for shipped staff review queues.
+
+### Changed
+
+- Promoted CivicPermit from v0.1.2 foundation to v1.0.0 permit pre-application product release.
+- Updated public UI copy, root health/status copy, docs, release gate, tests, and build artifact checks to the v1.0.0 contract.
+
 ## [0.1.2] - 2026-05-07
 
 ### Added

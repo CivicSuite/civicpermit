@@ -1,4 +1,4 @@
-"""Static public UI shell for CivicPermit v0.1.2."""
+"""Static public UI shell for CivicPermit v1.0.0."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def render_public_lookup_page() -> str:
   <p class="eyebrow">CivicSuite / CivicPermit public sample</p>
   <h1>Help applicants arrive with the right first packet.</h1>
   <p class="lede">CivicPermit demonstrates permit pre-application support: sample requirement lookup, intake-readiness review, and records-ready submittal outlines without becoming the permitting system of record.</p>
-  <p><span class="badge">v0.1.2 permit intake foundation + staff-gated persistence</span></p>
+  <p><span class="badge">v1.0.0 permit pre-application + staff review queues</span></p>
 </header>
 <main id="main" tabindex="-1">
   <section class="grid" aria-labelledby="lookup-title">
@@ -59,8 +59,8 @@ def render_public_lookup_page() -> str:
         <ul><li>Site plan showing existing and proposed structures.</li><li>Parking and access narrative.</li><li>Utility connection description.</li></ul>
       </div>
     </article>
-    <article class="card"><p class="kicker">Intake readiness</p><h2>Follow-up before submittal</h2><div class="result"><p>Missing items are returned as actionable applicant follow-up, not as an official completeness decision.</p></div></article>
-    <article class="card"><p class="kicker">Records-ready export</p><h2>Keep provenance</h2><div class="result"><p>Exports preserve inquiry text, checklist, staff reviewer, generated outline, and final staff edits.</p></div></article>
+    <article class="card"><p class="kicker">Intake readiness</p><h2>Follow-up before submittal</h2><div class="result"><p>Missing items are returned as actionable applicant follow-up and can be routed to a staff-only review queue, not as an official completeness decision.</p></div></article>
+    <article class="card"><p class="kicker">Records-ready export</p><h2>Keep provenance</h2><div class="result"><p>Exports preserve inquiry text, checklist, staff reviewer, generated outline, staff queue status, and final staff edits.</p></div></article>
     <article class="card"><p class="kicker">Boundary</p><h2>No permit approval</h2><div class="result warning"><p>CivicPermit does not approve permits, calculate official fees, schedule inspections, or replace the permitting system of record.</p></div></article>
   </section>
 </main>

@@ -74,7 +74,121 @@ def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
     assert get_response.status_code == 200
     assert get_response.json()["intake_id"] == intake_id
     assert get_response.json()["status"] == "ready-for-staff-triage"
+    assert get_response.json()["staff_review_id"] is None
     db_path.unlink()
+
+
+def test_persisted_intake_with_missing_materials_creates_staff_review_queue(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "api-staff-review-records.db"
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+    monkeypatch.setenv("CIVICPERMIT_STAFF_API_KEY", "test-staff-key")
+    headers = {
+        "X-CivicPermit-Role": "staff",
+        "X-CivicPermit-Staff-Key": "test-staff-key",
+    }
+
+    try:
+        create_response = client.post(
+            "/api/v1/civicpermit/intake/review",
+            json={"proposal": "ADU request with no contact details.", "project_type": "adu"},
+            headers=headers,
+        )
+        payload = create_response.json()
+        queue_response = client.get("/api/v1/civicpermit/staff/reviews", headers=headers)
+        summary_response = client.get("/api/v1/civicpermit/staff/reviews/summary", headers=headers)
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert create_response.status_code == 200
+    assert payload["intake_id"]
+    assert payload["staff_review_id"]
+    assert "property address or parcel identifier" in payload["missing_or_unclear"]
+    assert queue_response.status_code == 200
+    items = queue_response.json()["items"]
+    assert len(items) == 1
+    assert items[0]["review_id"] == payload["staff_review_id"]
+    assert items[0]["status"] == "open"
+    assert items[0]["visibility"] == "staff_only"
+    assert "do not approve permits" in items[0]["boundary"]
+    assert summary_response.status_code == 200
+    assert summary_response.json()["open_items"] == 1
+    db_path.unlink()
+
+
+def test_staff_review_queue_lifecycle_is_staff_gated_and_persistent(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "api-staff-review-lifecycle.db"
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+    monkeypatch.setenv("CIVICPERMIT_STAFF_API_KEY", "test-staff-key")
+    headers = {
+        "X-CivicPermit-Role": "staff",
+        "X-CivicPermit-Staff-Key": "test-staff-key",
+    }
+
+    try:
+        forbidden_response = client.post(
+            "/api/v1/civicpermit/staff/reviews",
+            json={
+                "proposal": "Commercial tenant improvement with incomplete life-safety plan.",
+                "project_type": "commercial",
+                "reason": "Life-safety plan requires staff review.",
+            },
+        )
+        create_response = client.post(
+            "/api/v1/civicpermit/staff/reviews",
+            json={
+                "proposal": "Commercial tenant improvement with incomplete life-safety plan.",
+                "project_type": "commercial",
+                "reason": "Life-safety plan requires staff review.",
+            },
+            headers=headers,
+        )
+        review_id = create_response.json()["review_id"]
+        invalid_close = client.patch(
+            f"/api/v1/civicpermit/staff/reviews/{review_id}",
+            json={"status": "resolved"},
+            headers=headers,
+        )
+        update_response = client.patch(
+            f"/api/v1/civicpermit/staff/reviews/{review_id}",
+            json={
+                "status": "resolved",
+                "assigned_to": "permit-tech@example.gov",
+                "resolution": "Applicant received corrected life-safety checklist.",
+            },
+            headers=headers,
+        )
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+        reloaded_response = client.get("/api/v1/civicpermit/staff/reviews?status=resolved", headers=headers)
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert forbidden_response.status_code == 403
+    assert create_response.status_code == 200
+    assert invalid_close.status_code == 422
+    assert "resolution is required" in invalid_close.json()["detail"]["fix"]
+    assert update_response.status_code == 200
+    assert update_response.json()["assigned_to"] == "permit-tech@example.gov"
+    assert update_response.json()["status"] == "resolved"
+    assert reloaded_response.status_code == 200
+    assert reloaded_response.json()["items"][0]["review_id"] == review_id
+    assert reloaded_response.json()["items"][0]["resolution"].startswith("Applicant received")
+    db_path.unlink()
+
+
+def test_staff_review_queue_requires_persistence_configuration() -> None:
+    response = client.get(
+        "/api/v1/civicpermit/staff/reviews",
+        headers={
+            "X-CivicPermit-Role": "staff",
+            "X-CivicPermit-Staff-Key": "unused",
+        },
+    )
+
+    assert response.status_code == 503
+    assert "Set CIVICPERMIT_INTAKE_DB_URL" in response.json()["detail"]["fix"]
 
 
 def test_persisted_intake_requires_staff_role(monkeypatch, tmp_path) -> None:

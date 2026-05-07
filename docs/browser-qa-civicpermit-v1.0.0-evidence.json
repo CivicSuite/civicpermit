@@ -1,0 +1,51 @@
+[
+  {
+    "viewport": "desktop",
+    "status": 200,
+    "title": "CivicPermit Pre-Application Intake",
+    "h1": "Help applicants arrive with the right first packet.",
+    "badge": "v1.0.0 permit pre-application + staff review queues",
+    "warning": "CivicPermit does not approve permits, calculate official fees, schedule inspections, or replace the permitting system of record.",
+    "activeText": "Skip to main content",
+    "consoleMessages": [],
+    "mainBox": {
+      "x": 160,
+      "y": 501.8125,
+      "width": 1120,
+      "height": 1175.625
+    },
+    "bodyWidth": 1440,
+    "screenshot": "docs/browser-qa-civicpermit-v1.0.0-desktop.png"
+  },
+  {
+    "viewport": "mobile",
+    "status": 200,
+    "title": "CivicPermit Pre-Application Intake",
+    "h1": "Help applicants arrive with the right first packet.",
+    "badge": "v1.0.0 permit pre-application + staff review queues",
+    "warning": "CivicPermit does not approve permits, calculate official fees, schedule inspections, or replace the permitting system of record.",
+    "activeText": "Skip to main content",
+    "consoleMessages": [],
+    "mainBox": {
+      "x": 0,
+      "y": 501.046875,
+      "width": 390,
+      "height": 1599.34375
+    },
+    "bodyWidth": 390,
+    "screenshot": "docs/browser-qa-civicpermit-v1.0.0-mobile.png"
+  },
+  {
+    "viewport": "api-error",
+    "status": 422,
+    "body": {
+      "detail": {
+        "message": "CivicPermit could not validate: project_type.",
+        "fix": "Send a JSON body that includes the required field names listed in the fields array, using strings for text inputs.",
+        "fields": [
+          "project_type"
+        ]
+      }
+    }
+  }
+]

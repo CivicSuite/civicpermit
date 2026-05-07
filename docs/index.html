@@ -27,20 +27,21 @@
 <main>
   <p class="eyebrow">CivicSuite / CivicPermit</p>
   <h1>Permit intake support that keeps staff responsible.</h1>
-  <p class="lede">CivicPermit is the permit pre-application and development-review intake support module for CivicSuite.</p>
+  <p class="lede">CivicPermit v1.0.0 is the permit pre-application and development-review intake support module for CivicSuite.</p>
   <section class="panel">
-    <span class="badge">v0.1.2 permit intake foundation + staff-gated persistence</span>
+    <span class="badge">v1.0.0 permit pre-application product release</span>
     <h2>Current State</h2>
-    <p>The package shell, API foundation, deterministic requirement lookup, optional database-backed requirement and intake records via <code>CIVICPERMIT_INTAKE_DB_URL</code>, staff-gated persisted intake create/read routes, review-required CivicZone/CivicCode context packet support, intake-readiness review, submittal outline, records-ready export checklist, and public sample UI exist. Permit approvals, legal advice, live GIS, live LLM calls, permit application ingestion, permitting-system integrations, and production staff-review queues are not shipped yet.</p>
+    <p>The package shell, API foundation, permit requirement lookup, database-backed requirement and intake records via <code>CIVICPERMIT_INTAKE_DB_URL</code>, staff-gated persisted intake create/read routes, staff review queues, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, intake-readiness review, submittal outline, records-ready export checklist, and public sample UI exist. Permit approvals, legal advice, live GIS, live LLM calls, permit-system writeback, official fee calculation, and system-of-record behavior are not shipped.</p>
   </section>
   <section class="panel">
     <h2>Product Promise</h2>
     <ul>
       <li>Find permit requirement context with citations.</li>
       <li>Carry CivicZone and CivicCode context IDs into permit intake packets without making live calls.</li>
-      <li>Surface sample intake-readiness factors for staff review.</li>
+      <li>Surface intake-readiness factors for staff review.</li>
+      <li>Route deficient persisted intakes into staff-only review queues.</li>
       <li>Draft submittal outlines without making official completeness decisions.</li>
-      <li>Preserve inquiry/checklist/reviewer provenance for municipal records.</li>
+      <li>Preserve inquiry/checklist/reviewer/queue provenance for municipal records.</li>
     </ul>
   </section>
 </main>

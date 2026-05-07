@@ -1,3 +1,5 @@
 # CivicPermit Implementation Plan
 
-CivicPermit v0.1.2 establishes a deterministic foundation: runtime shell, sample permit requirement lookup, staff-gated intake persistence, review-required development-review context packets for CivicZone/CivicCode references, intake-readiness review, submittal outline, records-ready export checklist, public sample UI, and CivicCore v1 alignment. Later releases add local permit-type configuration, live CivicZone/CivicCode runtime consumption, staff review queues, and production data governance.
+CivicPermit v1.0.0 ships the permit pre-application product lane: runtime shell, permit requirement lookup, staff-gated intake persistence, staff review queue workflows, review-required development-review context packets for CivicZone/CivicCode references, adversarial local integration mocks, intake-readiness review, submittal outline, records-ready export checklist, public sample UI, and CivicCore v1 alignment.
+
+Future work stays outside this release: official permit approvals, completeness determinations, fee calculation, inspection scheduling, live GIS, live LLM calls, and permitting-system writeback.
