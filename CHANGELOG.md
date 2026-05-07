@@ -12,6 +12,7 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 - Production-depth intake persistence slice with `CIVICPERMIT_INTAKE_DB_URL`, persisted permit requirement records, persisted intake review records, and retrieval by `intake_id`.
 - Staff-role gate for persisted intake create/read routes when intake persistence is configured.
+- Development-review context contract that returns review-required permit intake context with optional CivicZone and CivicCode context IDs.
 
 ### Changed
 

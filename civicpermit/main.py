@@ -38,6 +38,16 @@ class IntakeReviewRequest(BaseModel):
     project_type: str = Field(min_length=1, max_length=255)
 
 
+class DevelopmentReviewContextRequest(BaseModel):
+    project_type: str = Field(min_length=1, max_length=255)
+    proposal: str = Field(min_length=1, max_length=5000)
+    location_context: str = Field(default="", max_length=500)
+    zoning_context_id: str | None = Field(default=None, max_length=160)
+    code_context_id: str | None = Field(default=None, max_length=160)
+    zoning_context_summary: str | None = Field(default=None, max_length=1000)
+    code_context_summary: str | None = Field(default=None, max_length=1000)
+
+
 class SubmittalOutlineRequest(BaseModel):
     project_name: str = Field(min_length=1, max_length=500)
     proposal: str = Field(min_length=1, max_length=5000)
@@ -140,6 +150,39 @@ def intake_review(
     return payload
 
 
+@app.post("/api/v1/civicpermit/context/development-review")
+def development_review_context(request: DevelopmentReviewContextRequest) -> dict[str, object]:
+    requirement, source = _lookup_permit_requirement_with_source(
+        project_type=request.project_type,
+        location_context=request.location_context,
+    )
+    readiness = review_intake_readiness(
+        proposal=request.proposal,
+        project_type=request.project_type,
+    )
+    citations = [requirement.citation]
+    if request.zoning_context_id:
+        citations.append(f"CivicZone context: {request.zoning_context_id}")
+    if request.code_context_id:
+        citations.append(f"CivicCode context: {request.code_context_id}")
+    return {
+        "requirement_id": requirement.requirement_id,
+        "project_type": requirement.project_type,
+        "required_materials": list(requirement.required_materials),
+        "zoning_context_id": request.zoning_context_id,
+        "code_context_id": request.code_context_id,
+        "citations": citations,
+        "missing_or_unclear": list(readiness.missing_or_unclear),
+        "review_required": True,
+        "source": source,
+        "boundary": (
+            "CivicPermit provides pre-application intake context only; it is not a "
+            "permit approval, official completeness determination, fee calculation, "
+            "inspection result, or system-of-record action."
+        ),
+    }
+
+
 @app.get("/api/v1/civicpermit/intake/{intake_id}")
 def get_intake_review(
     intake_id: str,
@@ -225,6 +268,18 @@ def _lookup_permit_requirement(*, project_type: str, location_context: str = "")
     if _intake_database_url() is None:
         return lookup_permit_requirement(project_type=project_type, location_context=location_context)
     return _get_intake_repository().lookup_requirement(
+        project_type=project_type,
+        location_context=location_context,
+    )
+
+
+def _lookup_permit_requirement_with_source(*, project_type: str, location_context: str = ""):
+    if _intake_database_url() is None:
+        return (
+            lookup_permit_requirement(project_type=project_type, location_context=location_context),
+            "sample",
+        )
+    return _get_intake_repository().lookup_requirement_with_source(
         project_type=project_type,
         location_context=location_context,
     )

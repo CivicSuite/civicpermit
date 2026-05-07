@@ -99,6 +99,33 @@ def test_intake_and_submittal_apis() -> None:
     assert outline.json()["review_required"] is True
 
 
+def test_development_review_context_returns_review_required_contract() -> None:
+    response = client.post(
+        "/api/v1/civicpermit/context/development-review",
+        json={
+            "project_type": "adu",
+            "proposal": "ADU at 100 Main with site plan and contact email.",
+            "location_context": "R-2 parcel",
+            "zoning_context_id": "zone-ledger-1",
+            "code_context_id": "code-section-1",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["requirement_id"] == "permit-adu-1.0"
+    assert payload["required_materials"]
+    assert payload["zoning_context_id"] == "zone-ledger-1"
+    assert payload["code_context_id"] == "code-section-1"
+    assert "Sample Development Review Manual, ADU Intake Checklist" in payload["citations"]
+    assert "CivicZone context: zone-ledger-1" in payload["citations"]
+    assert "CivicCode context: code-section-1" in payload["citations"]
+    assert payload["review_required"] is True
+    assert payload["source"] == "sample"
+    assert "not a permit approval" in payload["boundary"]
+    assert "system-of-record action" in payload["boundary"]
+
+
 def test_public_ui_route_is_accessible_and_honest() -> None:
     response = client.get("/civicpermit")
     assert response.status_code == 200

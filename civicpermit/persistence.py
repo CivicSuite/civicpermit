@@ -99,6 +99,15 @@ class PermitIntakeRepository:
                 )
 
     def lookup_requirement(self, *, project_type: str, location_context: str = "") -> PermitRequirement:
+        requirement, _source = self.lookup_requirement_with_source(
+            project_type=project_type,
+            location_context=location_context,
+        )
+        return requirement
+
+    def lookup_requirement_with_source(
+        self, *, project_type: str, location_context: str = ""
+    ) -> tuple[PermitRequirement, str]:
         normalized = project_type.strip().casefold()
         with self.engine.begin() as connection:
             row = connection.execute(
@@ -110,8 +119,8 @@ class PermitIntakeRepository:
                 )
             ).mappings().first()
         if row is not None:
-            return _row_to_requirement(row)
-        return lookup_permit_requirement(project_type=project_type, location_context=location_context)
+            return _row_to_requirement(row), "configured"
+        return lookup_permit_requirement(project_type=project_type, location_context=location_context), "sample"
 
     def create_intake_review(self, *, proposal: str, project_type: str) -> StoredIntakeReview:
         review = review_intake_readiness(proposal=proposal, project_type=project_type)
