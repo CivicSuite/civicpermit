@@ -1,11 +1,13 @@
 """FastAPI runtime foundation for CivicPermit."""
 
 import os
+from typing import Annotated
 
 from civiccore import __version__ as CIVICCORE_VERSION
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import HTMLResponse, JSONResponse
+from pydantic import BaseModel, Field
 
 from civicpermit import __version__
 from civicpermit.intake_review import review_intake_readiness
@@ -27,25 +29,25 @@ _intake_db_url: str | None = None
 
 
 class RequirementLookupRequest(BaseModel):
-    project_type: str
-    location_context: str = ""
+    project_type: str = Field(min_length=1, max_length=255)
+    location_context: str = Field(default="", max_length=500)
 
 
 class IntakeReviewRequest(BaseModel):
-    proposal: str
-    project_type: str
+    proposal: str = Field(min_length=1, max_length=5000)
+    project_type: str = Field(min_length=1, max_length=255)
 
 
 class SubmittalOutlineRequest(BaseModel):
-    project_name: str
-    proposal: str
-    project_type: str
+    project_name: str = Field(min_length=1, max_length=500)
+    proposal: str = Field(min_length=1, max_length=5000)
+    project_type: str = Field(min_length=1, max_length=255)
 
 
 class PermitExportRequest(BaseModel):
-    title: str
-    project_type: str
-    format: str = "markdown"
+    title: str = Field(min_length=1, max_length=500)
+    project_type: str = Field(min_length=1, max_length=255)
+    format: str = Field(default="markdown", min_length=1, max_length=40)
 
 
 @app.get("/")
@@ -55,12 +57,12 @@ def root() -> dict[str, str]:
     return {
         "name": "CivicPermit",
         "version": __version__,
-        "status": "permit intake foundation plus intake persistence",
+        "status": "permit intake foundation plus intake persistence and CivicCore v1 alignment",
         "message": (
             "CivicPermit package, API foundation, sample permit requirement lookup, optional database-backed requirement and intake records, intake-readiness review, submittal outline helper, records-ready export checklist, and public UI foundation are online; "
             "permit approvals, official completeness determinations, fee calculations, inspections, live GIS, live LLM calls, and permitting-system-of-record integrations are not implemented yet."
         ),
-        "next_step": "Post-v0.1.1 roadmap: local permit type configuration, CivicZone/CivicCode context APIs, and staff review queues",
+        "next_step": "Post-v0.1.2 roadmap: local permit type configuration, CivicZone/CivicCode runtime consumption, and staff review queues",
     }
 
 
@@ -74,6 +76,33 @@ def health() -> dict[str, str]:
         "version": __version__,
         "civiccore_version": CIVICCORE_VERSION,
     }
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    _request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    fields = sorted(
+        {
+            ".".join(str(part) for part in error.get("loc", [])[1:])
+            for error in exc.errors()
+            if len(error.get("loc", [])) > 1
+        }
+    )
+    field_list = ", ".join(fields) if fields else "request body"
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": {
+                "message": f"CivicPermit could not validate: {field_list}.",
+                "fix": (
+                    "Send a JSON body that includes the required field names listed in "
+                    "the fields array, using strings for text inputs."
+                ),
+                "fields": fields,
+            }
+        },
+    )
 
 
 @app.get("/civicpermit", response_class=HTMLResponse)
@@ -93,8 +122,12 @@ def requirement_lookup(request: RequirementLookupRequest) -> dict[str, object]:
 
 
 @app.post("/api/v1/civicpermit/intake/review")
-def intake_review(request: IntakeReviewRequest) -> dict[str, object]:
+def intake_review(
+    request: IntakeReviewRequest,
+    x_civicpermit_role: Annotated[str | None, Header()] = None,
+) -> dict[str, object]:
     if _intake_database_url() is not None:
+        _require_staff_role(x_civicpermit_role)
         stored = _get_intake_repository().create_intake_review(
             proposal=request.proposal,
             project_type=request.project_type,
@@ -108,7 +141,10 @@ def intake_review(request: IntakeReviewRequest) -> dict[str, object]:
 
 
 @app.get("/api/v1/civicpermit/intake/{intake_id}")
-def get_intake_review(intake_id: str) -> dict[str, object]:
+def get_intake_review(
+    intake_id: str,
+    x_civicpermit_role: Annotated[str | None, Header()] = None,
+) -> dict[str, object]:
     if _intake_database_url() is None:
         raise HTTPException(
             status_code=503,
@@ -117,6 +153,7 @@ def get_intake_review(intake_id: str) -> dict[str, object]:
                 "fix": "Set CIVICPERMIT_INTAKE_DB_URL to retrieve persisted intake review records.",
             },
         )
+    _require_staff_role(x_civicpermit_role)
     stored = _get_intake_repository().get_intake_review(intake_id)
     if stored is None:
         raise HTTPException(
@@ -170,6 +207,18 @@ def _dispose_intake_repository() -> None:
     if _intake_repository is not None:
         _intake_repository.engine.dispose()
         _intake_repository = None
+
+
+def _require_staff_role(role: str | None) -> None:
+    if role == "staff":
+        return
+    raise HTTPException(
+        status_code=403,
+        detail={
+            "message": "Persisted CivicPermit intake records require staff access.",
+            "fix": "Send X-CivicPermit-Role: staff from a trusted staff or service workflow when intake persistence is enabled.",
+        },
+    )
 
 
 def _lookup_permit_requirement(*, project_type: str, location_context: str = ""):

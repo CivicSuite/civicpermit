@@ -6,9 +6,18 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-07
+
 ### Added
 
 - Production-depth intake persistence slice with `CIVICPERMIT_INTAKE_DB_URL`, persisted permit requirement records, persisted intake review records, and retrieval by `intake_id`.
+- Staff-role gate for persisted intake create/read routes when intake persistence is configured.
+
+### Changed
+
+- Aligned CivicPermit's release gate, CI install path, docs, and health-contract test with the published `civiccore==1.0.0` wheel.
+- Updated public UI copy to v0.1.2 and removed static no-op/editable controls from the sample intake view.
+- Documented the CivicCore v1.0 wheel prerequisite for clean local installs.
 
 ## [0.1.1] - 2026-04-28
 

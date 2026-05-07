@@ -48,9 +48,13 @@ def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
                 "proposal": "ADU at 100 Main Street with site plan, project description, contact email, and parcel.",
                 "project_type": "adu",
             },
+            headers={"X-CivicPermit-Role": "staff"},
         )
         intake_id = create_response.json()["intake_id"]
-        get_response = client.get(f"/api/v1/civicpermit/intake/{intake_id}")
+        get_response = client.get(
+            f"/api/v1/civicpermit/intake/{intake_id}",
+            headers={"X-CivicPermit-Role": "staff"},
+        )
     finally:
         main_module._dispose_intake_repository()
         main_module._intake_db_url = None
@@ -63,6 +67,29 @@ def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
     assert get_response.json()["intake_id"] == intake_id
     assert get_response.json()["status"] == "ready-for-staff-triage"
     db_path.unlink()
+
+
+def test_persisted_intake_requires_staff_role(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "intake-auth.db"
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+
+    try:
+        create_response = client.post(
+            "/api/v1/civicpermit/intake/review",
+            json={
+                "proposal": "CONFIDENTIAL: pre-application acquisition inquiry.",
+                "project_type": "adu",
+            },
+        )
+        get_response = client.get("/api/v1/civicpermit/intake/not-authorized")
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert create_response.status_code == 403
+    assert get_response.status_code == 403
+    assert "X-CivicPermit-Role: staff" in create_response.json()["detail"]["fix"]
+    db_path.unlink(missing_ok=True)
 
 
 def test_intake_lookup_requires_configured_database() -> None:
