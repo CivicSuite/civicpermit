@@ -4,7 +4,7 @@
 
 CivicPermit helps cities give applicants clearer pre-application guidance before a formal permit submittal. It can show requirement context, highlight missing or unclear intake materials for staff review, route deficient persisted intakes to a staff-only queue, and produce records-ready permit-intake exports.
 
-Current state: `1.0.0` permit pre-application product release. The module includes deterministic sample checks, optional database-backed requirement and intake records, staff review queue workflows, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, `civiccore==1.0.0` alignment, staff-only persisted intake create/read routes, and a public sample UI at `/civicpermit`.
+Current state: published `1.0.0` label under suite-wide release-recovery review. The module includes deterministic sample checks, optional database-backed requirement and intake records, staff review queue workflows, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, CivicCore v1.0.0 release-wheel alignment, staff-only persisted intake create/read routes, and a public sample UI at `/civicpermit`. Do not promote the label as freshly product-ready until recovery gates, post-merge CI, and broader suite retest evidence re-earn that status.
 
 CivicPermit does not provide legal advice, permit approvals, official completeness determinations, fee calculations, inspections, live GIS, live LLM calls, permit-system writeback, or final staff approval.
 

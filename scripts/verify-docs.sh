@@ -57,6 +57,9 @@ bad_markers=(
   "permit application ingestion is available"
   "permitting-system integrations are available"
   "production staff-review queues are available"
+  "v1.0.0 permit pre-application product release"
+  "permit pre-application product release"
+  "current product release"
 )
 
 for file in "${current_files[@]}"; do
