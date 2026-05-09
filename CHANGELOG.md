@@ -10,9 +10,10 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ### Recovery note
 
-- The `1.0.0` label is under suite-wide release-recovery review. Treat it as
-  provisional until recovery gates, post-merge CI, and broader suite retest
-  evidence re-earn product-ready status.
+- The `1.0.0` label was checked through the suite release-recovery pass with a
+  fresh local release gate and live browser QA. Treat the original release date
+  as historical; the recovery evidence is recorded in
+  `docs/release-recovery-status.md`.
 
 ### Added
 
@@ -22,8 +23,8 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ### Changed
 
-- Published CivicPermit release surfaces at `1.0.0`; the label is provisional
-  during the later suite-wide release-recovery pass.
+- Published CivicPermit release surfaces at `1.0.0`; the later suite
+  release-recovery pass records fresh verification evidence.
 - Updated public UI copy, root health/status copy, docs, release gate, tests, and build artifact checks to the v1.0.0 contract.
 
 ## [0.1.2] - 2026-05-07
