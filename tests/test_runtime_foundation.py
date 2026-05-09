@@ -70,7 +70,7 @@ def test_documentation_gate_blocks_stale_product_release_claims() -> None:
     assert "current product release" in script
 
 
-def test_current_docs_mark_v1_label_as_recovery_reviewed_not_freshly_product_ready() -> None:
+def test_current_docs_mark_v1_label_as_recovered_without_product_release_overclaim() -> None:
     docs = {
         "README.md": (ROOT / "README.md").read_text(encoding="utf-8"),
         "README.txt": (ROOT / "README.txt").read_text(encoding="utf-8"),
@@ -81,5 +81,6 @@ def test_current_docs_mark_v1_label_as_recovery_reviewed_not_freshly_product_rea
 
     for path, text in docs.items():
         lowered = text.lower()
-        assert "suite-wide release-recovery review" in lowered, path
+        assert "release-recovery" in lowered, path
+        assert "provisional" not in lowered, path
         assert "product release" not in lowered, path

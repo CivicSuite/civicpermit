@@ -1,0 +1,58 @@
+[
+  {
+    "name": "resident-desktop",
+    "path": "/civicpermit",
+    "width": 1440,
+    "height": 1000,
+    "expect": "Help applicants arrive with the right first packet.",
+    "status": 200,
+    "overflow": false,
+    "focus": "Skip to main content",
+    "consoleMessages": [],
+    "pageErrors": [],
+    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\resident-desktop.png",
+    "passed": true
+  },
+  {
+    "name": "resident-mobile",
+    "path": "/civicpermit",
+    "width": 390,
+    "height": 844,
+    "expect": "ADU pre-application checklist",
+    "status": 200,
+    "overflow": false,
+    "focus": "Skip to main content",
+    "consoleMessages": [],
+    "pageErrors": [],
+    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\resident-mobile.png",
+    "passed": true
+  },
+  {
+    "name": "docs-desktop",
+    "path": "/docs",
+    "width": 1440,
+    "height": 1000,
+    "expect": "CivicPermit",
+    "status": 200,
+    "overflow": false,
+    "focus": "/openapi.json",
+    "consoleMessages": [],
+    "pageErrors": [],
+    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\docs-desktop.png",
+    "passed": true
+  },
+  {
+    "name": "health-json",
+    "path": "/health",
+    "width": 800,
+    "height": 600,
+    "expect": "civicpermit",
+    "status": 200,
+    "overflow": false,
+    "focus": "DIV",
+    "consoleMessages": [],
+    "pageErrors": [],
+    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\health-json.png",
+    "passed": true
+  }
+]
