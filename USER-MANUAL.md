@@ -4,7 +4,7 @@
 
 CivicPermit helps cities give applicants clearer pre-application guidance before a formal permit submittal. It can show requirement context, highlight missing or unclear intake materials for staff review, route deficient persisted intakes to a staff-only queue, and produce records-ready permit-intake exports.
 
-Current state: published `1.0.0` label recovered through suite release-recovery evidence. The module includes deterministic sample checks, optional database-backed requirement and intake records, staff review queue workflows, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, CivicCore v1.0.0 release-wheel alignment, staff-only persisted intake create/read routes, and a public sample UI at `/civicpermit`. See `docs/release-recovery-status.md` for the local release gate, browser QA, and CI evidence.
+Current state: published 0.2.0 recovery label recovered through suite release-recovery evidence. The module includes deterministic sample checks, optional database-backed requirement and intake records, staff review queue workflows, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, CivicCore v1.0.0 release-wheel alignment, staff-only persisted intake create/read routes, and a public sample UI at `/civicpermit`. See `docs/release-recovery-status.md` for the local release gate, browser QA, and CI evidence.
 
 CivicPermit does not provide legal advice, permit approvals, official completeness determinations, fee calculations, inspections, live GIS, live LLM calls, permit-system writeback, or final staff approval.
 
@@ -42,10 +42,10 @@ bash scripts/verify-release.sh
 
 ```mermaid
 flowchart LR
-  PublicUser["Resident or permit-counter staff"] --> CivicPermit["CivicPermit v1.0.0"]
+  PublicUser["Resident or permit-counter staff"] --> CivicPermit["CivicPermit v0.2.0"]
   CivicPermit --> CivicCore["CivicCore v1.0.0"]
-  CivicPermit -. released-context .-> CivicZone["CivicZone v1.0.0"]
+  CivicPermit -. released-context .-> CivicZone["CivicZone v0.2.0"]
   CivicPermit -. released-context .-> CivicCode["CivicCode v1.0.0"]
 ```
 
-CivicPermit depends on CivicCore. CivicCore does not depend on CivicPermit. CivicPermit v1.0.0 uses deterministic sample requirement data plus optional staff-gated persistence, review-required context packets for released CivicZone/CivicCode references, staff review queue records, and adversarial local mocks for integration-depth validation.
+CivicPermit depends on CivicCore. CivicCore does not depend on CivicPermit. CivicPermit v0.2.0 uses deterministic sample requirement data plus optional staff-gated persistence, review-required context packets for released CivicZone/CivicCode references, staff review queue records, and adversarial local mocks for integration-depth validation.

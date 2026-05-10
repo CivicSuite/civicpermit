@@ -1,4 +1,4 @@
-"""Static public UI shell for CivicPermit v1.0.0."""
+"""Static public UI shell for CivicPermit v0.2.0."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def render_public_lookup_page() -> str:
   <p class="eyebrow">CivicSuite / CivicPermit public sample</p>
   <h1>Help applicants arrive with the right first packet.</h1>
   <p class="lede">CivicPermit demonstrates permit pre-application support: sample requirement lookup, intake-readiness review, and records-ready submittal outlines without becoming the permitting system of record.</p>
-  <p><span class="badge">v1.0.0 permit pre-application + staff review queues</span></p>
+  <p><span class="badge">v0.2.0 permit pre-application + staff review queues</span></p>
 </header>
 <main id="main" tabindex="-1">
   <section class="grid" aria-labelledby="lookup-title">

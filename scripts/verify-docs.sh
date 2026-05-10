@@ -57,7 +57,7 @@ bad_markers=(
   "permit application ingestion is available"
   "permitting-system integrations are available"
   "production staff-review queues are available"
-  "v1.0.0 permit pre-application product release"
+  "v0.2.0 permit pre-application product release"
   "permit pre-application product release"
   "current product release"
 )

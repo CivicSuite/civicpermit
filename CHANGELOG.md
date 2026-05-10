@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0] - 2026-05-10
+
+- Demoted the false v1.0.0 release label after the external CivicSuite audit found this module is a recovery/foundation module, not a canonical spec-complete v1 product.
+- Preserved the useful recovery work while resetting the public package version to 0.2.0.
+- Kept the CivicCore v1.0.0 wheel dependency and pinned it with SHA256 for release integrity.
+- Supersedes the prior public v1.0.0 posture; do not treat v1.0.0 as production-ready or spec-complete.
+
 All notable changes to CivicPermit will be documented in this file.
 
 The format follows Keep a Changelog, and this project follows Semantic Versioning.

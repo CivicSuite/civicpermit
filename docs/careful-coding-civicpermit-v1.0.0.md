@@ -1,10 +1,10 @@
-# CivicPermit v1.0.0 Careful-Coding Evidence
+# CivicPermit v0.2.0 Careful-Coding Evidence
 
 Date: 2026-05-07
 
 ## Scope
 
-Finish CivicPermit v1.0.0 product depth without touching queued modules.
+Finish CivicPermit v0.2.0 product depth without touching queued modules.
 
 Changed areas:
 
