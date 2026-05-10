@@ -3,7 +3,7 @@ CivicPermit
 
 CivicPermit is the CivicSuite module for permit pre-application and development-review intake support.
 
-Current state: published v1.0.0 label recovered through suite release-recovery evidence. This repo contains a FastAPI package aligned to the published CivicCore v1.0.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at /civicpermit. See docs/release-recovery-status.md for the local release gate, browser QA, and CI evidence.
+Current state: published v0.2.0 recovery label recovered through suite release-recovery evidence. This repo contains a FastAPI package aligned to the published CivicCore v1.0.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at /civicpermit. See docs/release-recovery-status.md for the local release gate, browser QA, and CI evidence.
 
 It does not ship permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit-system writeback, or system-of-record behavior.
 

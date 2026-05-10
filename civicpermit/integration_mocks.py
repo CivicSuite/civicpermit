@@ -42,6 +42,6 @@ def validate_development_review_mocks(payload: dict[str, Any]) -> IntegrationMoc
         findings=tuple(findings),
         boundary=(
             "CivicPermit validates local integration context only; it does not call live "
-            "CivicZone, CivicCode, GIS, LLM, or permitting-system services in v1.0.0."
+            "CivicZone, CivicCode, GIS, LLM, or permitting-system services in this recovery release."
         ),
     )

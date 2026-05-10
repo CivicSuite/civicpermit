@@ -1,4 +1,4 @@
-# CivicPermit v1.0.0 Release-Gate Audit
+# CivicPermit v0.2.0 Release-Gate Audit
 
 Date: 2026-05-07
 
@@ -83,7 +83,7 @@ Finding fixed during audit:
   - Why it matters: the built wheel initially depended on `civiccore==1.0.0`, which pip could not resolve from PyPI.
   - Evidence: fresh wheel install failed with `No matching distribution found for civiccore==1.0.0`.
   - Fix: changed dependency to the published CivicCore v1.0.0 wheel URL and enabled Hatch direct references.
-  - Retest: fresh WSL venv installed `dist/civicpermit-1.0.0-py3-none-any.whl`; `/health` returned CivicPermit `1.0.0` and CivicCore `1.0.0`.
+  - Retest: fresh WSL venv installed `dist/civicpermit-0.2.0-py3-none-any.whl`; `/health` returned CivicPermit `1.0.0` and CivicCore `1.0.0`.
 
 ## 7. Security And Authorization Deep Dive
 
@@ -144,7 +144,7 @@ Commands run:
 
 ## 15. Cross-Cutting Synthesis
 
-CivicPermit v1.0.0 is locally release-ready after the install/bootstrap fix. The strongest residual risk is that GitHub CI and release publication have not run yet on the final pushed branch.
+CivicPermit v0.2.0 is locally release-ready after the install/bootstrap fix. The strongest residual risk is that GitHub CI and release publication have not run yet on the final pushed branch.
 
 ## 16. Verification Gaps And Sign-Off Limits
 
