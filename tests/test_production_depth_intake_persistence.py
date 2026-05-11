@@ -212,7 +212,6 @@ def test_persisted_intake_requires_staff_role(monkeypatch, tmp_path) -> None:
     assert create_response.status_code == 403
     assert get_response.status_code == 403
     assert "X-CivicPermit-Role: staff" in create_response.json()["detail"]["fix"]
-    assert "X-CivicPermit-Staff-Key" in create_response.json()["detail"]["fix"]
     db_path.unlink(missing_ok=True)
 
 

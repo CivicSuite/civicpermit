@@ -23,7 +23,7 @@ It does **not** ship permit approvals, official completeness determinations, fee
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.0.1/civiccore-1.0.1-py3-none-any.whl
+python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.1.0/civiccore-1.1.0-py3-none-any.whl
 python -m pip install -e ".[dev]"
 python -m pytest -q
 bash scripts/verify-release.sh
@@ -34,7 +34,7 @@ For WSL verification:
 ```bash
 python3 -m venv .venv-wsl
 . .venv-wsl/bin/activate
-python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.0.1/civiccore-1.0.1-py3-none-any.whl
+python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.1.0/civiccore-1.1.0-py3-none-any.whl
 python -m pip install -e ".[dev]"
 python -m pytest -q
 bash scripts/verify-release.sh
@@ -57,7 +57,7 @@ bash scripts/verify-release.sh
 - `POST /api/v1/civicpermit/submittal/outline` returns a review-required submittal outline.
 - `POST /api/v1/civicpermit/export` returns a records-ready permit-intake export checklist.
 
-Set `CIVICPERMIT_INTAKE_DB_URL` to enable persistent permit requirement, intake review, and staff review queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff or service workflow. When unset, CivicPermit continues to use deterministic in-memory sample data for public applicant guidance.
+Set `CIVICPERMIT_INTAKE_DB_URL` to enable persistent permit requirement, intake review, and staff review queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff workflow. CivicPermit uses CivicCore `staff_key_gate` for timing-safe key comparison. When unset, CivicPermit continues to use deterministic in-memory sample data for public applicant guidance.
 
 ## License
 

@@ -27,12 +27,12 @@ CivicPermit is a FastAPI Python package pinned to the published `civiccore v1.0.
 - `POST /api/v1/civicpermit/submittal/outline`
 - `POST /api/v1/civicpermit/export`
 
-Set `CIVICPERMIT_INTAKE_DB_URL` to persist permit requirement, intake review, and staff queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff or service workflow. Leave it unset for deterministic sample behavior.
+Set `CIVICPERMIT_INTAKE_DB_URL` to persist permit requirement, intake review, and staff queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff workflow. CivicPermit uses CivicCore `staff_key_gate` for timing-safe key comparison. Leave it unset for deterministic sample behavior.
 
 Run local verification with:
 
 ```powershell
-python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.0.1/civiccore-1.0.1-py3-none-any.whl
+python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.1.0/civiccore-1.1.0-py3-none-any.whl
 python -m pip install -e ".[dev]"
 python -m pytest -q
 bash scripts/verify-release.sh
