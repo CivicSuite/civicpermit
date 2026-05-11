@@ -6,7 +6,6 @@ from pathlib import Path
 
 PLACEHOLDERS = {
     "audit",
-    "auth",
     "catalog",
     "connectors",
     "exemptions",

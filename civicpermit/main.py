@@ -1,10 +1,10 @@
 """FastAPI runtime foundation for CivicPermit."""
 
 import os
-from hmac import compare_digest
 from typing import Annotated
 
 from civiccore import __version__ as CIVICCORE_VERSION
+from civiccore.auth import staff_key_gate
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -33,6 +33,7 @@ app = FastAPI(
 
 _intake_repository: PermitIntakeRepository | None = None
 _intake_db_url: str | None = None
+_require_staff_key = staff_key_gate("CIVICPERMIT_STAFF_API_KEY", "X-CivicPermit-Staff-Key")
 
 
 class RequirementLookupRequest(BaseModel):
@@ -184,7 +185,7 @@ def intake_review(
                     + ", ".join(stored.missing_or_unclear)
                     + ". Staff must review before formal intake."
                 ),
-                created_by=x_civicpermit_role or "staff",
+                created_by="staff",
             )
         return _stored_intake_response(stored, staff_review=staff_review)
 
@@ -300,7 +301,7 @@ def create_staff_review(
         proposal=request.proposal,
         project_type=request.project_type,
         reason=request.reason,
-        created_by=x_civicpermit_role or "staff",
+        created_by="staff",
     )
     return _staff_review_payload(item)
 
@@ -388,24 +389,7 @@ def _dispose_intake_repository() -> None:
 
 
 def _require_staff_role(role: str | None, staff_key_header: str | None) -> None:
-    staff_key = os.environ.get("CIVICPERMIT_STAFF_API_KEY")
-    if not staff_key:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "message": "CivicPermit persisted intake access is not configured.",
-                "fix": "Set CIVICPERMIT_STAFF_API_KEY before enabling persisted intake create/read routes.",
-            },
-        )
-    if role == "staff" and staff_key_header is not None and compare_digest(staff_key_header, staff_key):
-        return
-    raise HTTPException(
-        status_code=403,
-        detail={
-            "message": "Persisted CivicPermit intake records require staff access.",
-            "fix": "Send X-CivicPermit-Role: staff and X-CivicPermit-Staff-Key from a trusted staff or service workflow when intake persistence is enabled.",
-        },
-    )
+    _require_staff_key(role=role, staff_key=staff_key_header)
 
 
 def _require_persistence_configured() -> None:
