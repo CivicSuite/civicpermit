@@ -1,12 +1,12 @@
-# CivicPermit v0.2.0 Browser QA
+# CivicPermit v1.0.0 Browser QA
 
-Date: 2026-05-07
+Date: 2026-05-21
 
 ## Runtime
 
-- Server: `python -m uvicorn civicpermit.main:app --host 127.0.0.1 --port 8024`
-- Browser runner: WSL Node + Playwright Chromium
-- Target: `http://127.0.0.1:8024/civicpermit`
+- Server: `python -m uvicorn civicpermit.main:app --host 127.0.0.1 --port 18154`
+- Browser runner: Windows Python + Playwright Chromium
+- Target: `http://127.0.0.1:18154/civicpermit`
 
 ## Desktop
 
@@ -15,8 +15,9 @@ Date: 2026-05-07
 - Screenshot: `docs/browser-qa-civicpermit-v1.0.0-desktop.png`
 - Console messages: none
 - H1: `Help applicants arrive with the right first packet.`
-- Badge: `v0.2.0 permit pre-application + staff review queues`
+- Badge: `v1.0.0 permit pre-application + staff review queues`
 - Boundary warning present: CivicPermit does not approve permits, calculate official fees, schedule inspections, or replace the permitting system of record.
+- Horizontal overflow: none
 - Keyboard/focus: first Tab focuses `Skip to main content`.
 
 ## Mobile

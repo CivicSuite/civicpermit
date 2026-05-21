@@ -4,15 +4,16 @@
     "status": 200,
     "title": "CivicPermit Pre-Application Intake",
     "h1": "Help applicants arrive with the right first packet.",
-    "badge": "v0.2.0 permit pre-application + staff review queues",
+    "badge": "v1.0.0 permit pre-application + staff review queues",
     "warning": "CivicPermit does not approve permits, calculate official fees, schedule inspections, or replace the permitting system of record.",
     "activeText": "Skip to main content",
     "consoleMessages": [],
+    "horizontalOverflow": false,
     "mainBox": {
       "x": 160,
-      "y": 501.8125,
+      "y": 545.890625,
       "width": 1120,
-      "height": 1175.625
+      "height": 1129.625
     },
     "bodyWidth": 1440,
     "screenshot": "docs/browser-qa-civicpermit-v1.0.0-desktop.png"
@@ -22,15 +23,16 @@
     "status": 200,
     "title": "CivicPermit Pre-Application Intake",
     "h1": "Help applicants arrive with the right first packet.",
-    "badge": "v0.2.0 permit pre-application + staff review queues",
+    "badge": "v1.0.0 permit pre-application + staff review queues",
     "warning": "CivicPermit does not approve permits, calculate official fees, schedule inspections, or replace the permitting system of record.",
     "activeText": "Skip to main content",
     "consoleMessages": [],
+    "horizontalOverflow": false,
     "mainBox": {
       "x": 0,
-      "y": 501.046875,
+      "y": 518.3125,
       "width": 390,
-      "height": 1599.34375
+      "height": 1689.34375
     },
     "bodyWidth": 390,
     "screenshot": "docs/browser-qa-civicpermit-v1.0.0-mobile.png"

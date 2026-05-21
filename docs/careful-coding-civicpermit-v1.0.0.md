@@ -1,10 +1,10 @@
-# CivicPermit v0.2.0 Careful-Coding Evidence
+# CivicPermit v1.0.0 Careful-Coding Evidence
 
-Date: 2026-05-07
+Date: 2026-05-21
 
 ## Scope
 
-Finish CivicPermit v0.2.0 product depth without touching queued modules.
+Finish CivicPermit v1.0.0 public-use module release depth without touching queued modules.
 
 Changed areas:
 
@@ -16,6 +16,10 @@ Changed areas:
 - `tests/test_integration_adversarial_mocks.py`
 - `tests/test_runtime_foundation.py`
 - `tests/test_permit_foundation.py`
+- `.github/workflows/verify.yml`
+- `.github/workflows/release.yml`
+- `.pipelines/`
+- `scripts/policy/`
 - Current-facing docs and release scripts.
 
 ## Step 1 - Callers And Consumers
@@ -38,10 +42,13 @@ Searched for:
 
 - `0.1.2`
 - `v0.1.2`
+- `0.2.0`
+- `v0.2.0`
 - `production staff-review queues`
 - `not shipped yet`
 - `Post-v0.1.2`
 - stale CivicZone/CivicCode version references
+- stale CivicCore v1.0 references
 
 Current-facing release surfaces were updated to v1.0.0. Historical v0.1.x QA files remain historical evidence.
 
@@ -58,6 +65,8 @@ New v1.0.0 contracts:
 
 This changes CivicPermit's v1 API surface in `main.py`, `persistence.py`, tests, and docs. Existing v0.1.2 tests/docs assumed staff queues were unshipped; leaving those stale would create false release-readiness claims.
 
+This recovery pass also changes release infrastructure by adding the Agent Pipeline for Codex v0.9.0 policy scaffold and a tag-triggered GitHub release workflow. The blast radius is limited to CivicPermit source release truth and CI/release publication.
+
 ## Steps 6-8 - Post-Edit Path Proof
 
 Full code path:
@@ -70,11 +79,12 @@ Render/data proof:
 - Queue lifecycle is asserted by `test_staff_review_queue_lifecycle_is_staff_gated_and_persistent`.
 - Integration findings are asserted by `test_integration_adversarial_mocks.py`.
 - UI v1 badge and boundary warning are asserted by tests and Playwright evidence.
+- Pipeline policy checks prove edited paths stay within the CivicPermit v1.0.0 scope lock.
 
 ## Step 9 - Self-Audit
 
 - Engineering: synchronous SQLAlchemy flow, no async deadlock or swallowed exception introduced.
 - UX: public UI is static, browser-tested at desktop/mobile, zero console messages.
-- QA: WSL tests and Playwright checks were run.
+- QA: Windows tests, release verifier, policy checks, and Playwright checks were run.
 - Tests: new staff queue and adversarial mock behavior covered.
 - Docs: README, user manual, changelog, security notes, docs index, browser QA summary, and release scripts updated.
