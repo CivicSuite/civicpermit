@@ -27,6 +27,15 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-21
+
+### Corrected
+
+- Corrected the false v1.0.0 release label after the independent CivicSuite release-integrity audit found CivicPermit does not meet the Section 2 FINISHED and SHIPPING bar.
+- Set the honest current label to v0.2.1 and superseded the mistaken v1.0.0 posture without deleting the historical record.
+- Current classification: deterministic scaffold; no real AI layer, full frontend, Alembic migrations, real municipal data/search, or public-use gate.
+- CivicPermit must not be described as finished, shipping, city-ready, product-ready, or public-use ready until a future independent audit signs off against the full Section 2 gate.
+
 ## [1.0.0] - 2026-05-07
 
 ### Recovery note
