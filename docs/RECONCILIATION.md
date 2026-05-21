@@ -1,6 +1,6 @@
 # Reconciliation
 
-| Driver | CivicPermit v1.0.0 result |
+| Driver | CivicPermit v0.2.1 result |
 |---|---|
 | Unified spec CivicPermit catalog entry | Pre-application and intake copilot behavior represented through permit requirement lookup, intake-readiness review, staff review queues, submittal outline, and records-ready export helpers. |
 | Suite non-negotiables | Docs, tests, browser QA, adversarial mocks, Apache 2.0 code license, CC BY 4.0 docs license, and CivicCore pin included. |
