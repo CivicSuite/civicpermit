@@ -1,58 +1,62 @@
-[
-  {
-    "name": "resident-desktop",
-    "path": "/civicpermit",
-    "width": 1440,
-    "height": 1000,
-    "expect": "Help applicants arrive with the right first packet.",
-    "status": 200,
-    "overflow": false,
-    "focus": "Skip to main content",
-    "consoleMessages": [],
-    "pageErrors": [],
-    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\resident-desktop.png",
-    "passed": true
-  },
-  {
-    "name": "resident-mobile",
-    "path": "/civicpermit",
-    "width": 390,
-    "height": 844,
-    "expect": "ADU pre-application checklist",
-    "status": 200,
-    "overflow": false,
-    "focus": "Skip to main content",
-    "consoleMessages": [],
-    "pageErrors": [],
-    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\resident-mobile.png",
-    "passed": true
-  },
-  {
-    "name": "docs-desktop",
-    "path": "/docs",
-    "width": 1440,
-    "height": 1000,
-    "expect": "CivicPermit",
-    "status": 200,
-    "overflow": false,
-    "focus": "/openapi.json",
-    "consoleMessages": [],
-    "pageErrors": [],
-    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\docs-desktop.png",
-    "passed": true
-  },
-  {
-    "name": "health-json",
-    "path": "/health",
-    "width": 800,
-    "height": 600,
-    "expect": "civicpermit",
-    "status": 200,
-    "overflow": false,
-    "focus": "DIV",
-    "consoleMessages": [],
-    "pageErrors": [],
-    "screenshot": "docs\\qa\\current-civicpermit-release-qa\\health-json.png",
-    "passed": true
-  }
-]
+{
+  "generated_at": "2026-05-21T14:41:59Z",
+  "base_url": "http://127.0.0.1:18154",
+  "scenarios": [
+    {
+      "name": "resident-desktop",
+      "path": "/civicpermit",
+      "viewport": "1440x1000",
+      "status": 200,
+      "overflow": false,
+      "console_count": 0,
+      "console_messages": [],
+      "page_error_count": 0,
+      "page_errors": [],
+      "focus_evidence": "Skip to main content",
+      "missing_copy": [],
+      "screenshot": "docs/qa/current-civicpermit-release-qa/resident-desktop.png"
+    },
+    {
+      "name": "resident-mobile",
+      "path": "/civicpermit",
+      "viewport": "390x844",
+      "status": 200,
+      "overflow": false,
+      "console_count": 0,
+      "console_messages": [],
+      "page_error_count": 0,
+      "page_errors": [],
+      "focus_evidence": "Skip to main content",
+      "missing_copy": [],
+      "screenshot": "docs/qa/current-civicpermit-release-qa/resident-mobile.png"
+    },
+    {
+      "name": "docs-desktop",
+      "path": "/docs",
+      "viewport": "1440x1000",
+      "status": 200,
+      "overflow": false,
+      "console_count": 0,
+      "console_messages": [],
+      "page_error_count": 0,
+      "page_errors": [],
+      "focus_evidence": "/openapi.json",
+      "missing_copy": [],
+      "screenshot": "docs/qa/current-civicpermit-release-qa/docs-desktop.png"
+    },
+    {
+      "name": "health-json",
+      "path": "/health",
+      "viewport": "800x600",
+      "status": 200,
+      "overflow": false,
+      "console_count": 0,
+      "console_messages": [],
+      "page_error_count": 0,
+      "page_errors": [],
+      "focus_evidence": "DIV",
+      "missing_copy": [],
+      "screenshot": "docs/qa/current-civicpermit-release-qa/health-json.png"
+    }
+  ]
+}

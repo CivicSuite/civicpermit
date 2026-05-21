@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install CivicCore release wheel
+        run: python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.1.0/civiccore-1.1.0-py3-none-any.whl
+
+      - name: Install package and test dependencies
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run release verification
+        run: bash scripts/verify-release.sh
+
+      - name: Create release notes
+        run: |
+          cat > release-notes.md <<EOF
+          CivicPermit ${{ github.ref_name }} release.
+
+          Artifacts:
+          - civicpermit wheel
+          - civicpermit source distribution
+          - SHA256SUMS.txt
+
+          Verify locally with:
+
+          \`\`\`bash
+          sha256sum -c SHA256SUMS.txt
+          bash scripts/verify-release.sh
+          \`\`\`
+          EOF
+
+      - name: Publish GitHub release
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            dist/* \
+            --repo "$GH_REPO" \
+            --title "civicpermit ${{ github.ref_name }}" \
+            --notes-file release-notes.md

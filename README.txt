@@ -3,7 +3,7 @@ CivicPermit
 
 CivicPermit is the CivicSuite module for permit pre-application and development-review intake support.
 
-Current state: published v0.2.0 recovery label recovered through suite release-recovery evidence. This repo contains a FastAPI package aligned to the published CivicCore v1.0.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at /civicpermit. See docs/release-recovery-status.md for the local release gate, browser QA, and CI evidence.
+Current state: v1.0.0 public-use module release recovered through current release gates. This repo contains a FastAPI package aligned to the published CivicCore v1.1.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at /civicpermit. See docs/release-recovery-status.md for the local release gate, browser QA, and CI evidence.
 
 It does not ship permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit-system writeback, or system-of-record behavior.
 
@@ -23,7 +23,7 @@ Core API:
 - POST /api/v1/civicpermit/submittal/outline
 - POST /api/v1/civicpermit/export
 
-Quickstart: install CivicCore first with python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.0/civiccore-1.0.0-py3-none-any.whl, then run python -m pip install -e ".[dev]".
+Quickstart: install CivicCore first with python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.1.0/civiccore-1.1.0-py3-none-any.whl, then run python -m pip install -e ".[dev]".
 
 Set CIVICPERMIT_INTAKE_DB_URL to enable persistent permit requirement, intake review, and staff review queue records. Persisted staff routes require CIVICPERMIT_STAFF_API_KEY, X-CivicPermit-Role: staff, and matching X-CivicPermit-Staff-Key from a trusted staff or service workflow. When unset, CivicPermit continues to use deterministic in-memory sample data for public applicant guidance.
 

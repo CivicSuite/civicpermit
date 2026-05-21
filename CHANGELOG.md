@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0] - 2026-05-21
+
+### Changed
+
+- Promoted CivicPermit to an honest v1.0.0 public-use module release after the active-module recovery gate.
+- Synchronized package metadata, release verifier, public UI, docs, tests, browser QA evidence, release-gate audit evidence, and GitHub release workflow around the CivicCore v1.1.0 wheel pin.
+- Preserved the product boundary: CivicPermit supports permit pre-application and intake readiness, but does not approve permits, make official completeness determinations, calculate official fees, schedule inspections, call live GIS/LLM systems, write back to a permitting system, or act as a system of record.
+
 ## [0.2.0] - 2026-05-11
 
 ### Changed
@@ -10,7 +18,7 @@
 
 - Demoted the false v1.0.0 release label after the external CivicSuite audit found this module is a recovery/foundation module, not a canonical spec-complete v1 product.
 - Preserved the useful recovery work while resetting the public package version to 0.2.0.
-- Kept the CivicCore v1.0.0 wheel dependency and pinned it with SHA256 for release integrity.
+- Kept the CivicCore v1.0.0 wheel dependency at that time and pinned it with SHA256 for release integrity.
 - Supersedes the prior public v1.0.0 posture; do not treat v1.0.0 as production-ready or spec-complete.
 
 All notable changes to CivicPermit will be documented in this file.
@@ -50,7 +58,7 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ### Changed
 
-- Aligned CivicPermit's release gate, CI install path, docs, and health-contract test with the published CivicCore v1.0.0 wheel.
+- Aligned CivicPermit's release gate, CI install path, docs, and health-contract test with the then-published CivicCore v1.0.0 wheel.
 - Updated public UI copy to v0.1.2 and removed static no-op/editable controls from the sample intake view.
 - Documented the CivicCore v1.0 wheel prerequisite for clean local installs.
 

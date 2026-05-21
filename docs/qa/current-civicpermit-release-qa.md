@@ -1,11 +1,11 @@
 # CivicPermit Current Release QA
 
-Date: 2026-05-09
+Date: 2026-05-21
 Scope: live local CivicPermit runtime at `http://127.0.0.1:18154`
 
 ## Summary
 
-Live browser QA passed for the current CivicPermit recovery pass.
+Live browser QA passed for the CivicPermit v1.0.0 public-use module release pass.
 
 | Scenario | Viewport | Path | Status | Overflow | Console | Page errors | Focus evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
