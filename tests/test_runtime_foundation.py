@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_package_version_is_100() -> None:
-    assert civicpermit.__version__ == "0.2.1"
+    assert civicpermit.__version__ == "0.2.2"
 
 
 def test_pyproject_uses_published_civiccore_release_wheel() -> None:
@@ -33,7 +33,7 @@ def test_root_endpoint_states_runtime_boundary() -> None:
     payload = response.json()
 
     assert payload["name"] == "CivicPermit"
-    assert payload["version"] == "0.2.1"
+    assert payload["version"] == "0.2.2"
     assert payload["status"] == "v1 permit pre-application and intake-readiness runtime"
     assert "staff review queues" in payload["message"]
     assert "permit approvals" in payload["message"]
@@ -48,7 +48,7 @@ def test_health_endpoint_reports_versions() -> None:
 
     assert payload["status"] == "ok"
     assert payload["service"] == "civicpermit"
-    assert payload["version"] == "0.2.1"
+    assert payload["version"] == "0.2.2"
     assert payload["civiccore_version"] == "1.1.0"
 
 
@@ -81,7 +81,7 @@ def test_current_docs_mark_corrective_demotion_without_product_release_overclaim
 
     for path, text in docs.items():
         lowered = text.lower()
-        assert "v0.2.1 corrective demotion state" in lowered, path
+        assert "v0.2.2 corrective demotion state" in lowered, path
         assert "previous v1.0.0 release was published in error" in lowered, path
         assert "provisional" not in lowered, path
         assert "product release" not in lowered, path

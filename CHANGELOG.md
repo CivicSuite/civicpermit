@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2] - 2026-05-23
+
+- Narrow truth-repair release. No functional upgrade.
+- Exists solely to supersede the false v1.0.0 release from 2026-05-21 in
+  GitHub's Latest impression.
+- CivicCore pin unchanged.
+
 ## [1.0.0] - 2026-05-21
 
 ### Changed
