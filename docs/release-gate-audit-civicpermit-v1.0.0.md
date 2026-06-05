@@ -4,7 +4,7 @@ Date: 2026-05-21
 
 ## 1. Executive Audit
 
-- Scope: `C:\Users\scott\OneDrive\Desktop\Claude\civicpermit`
+- Scope: `C:\dev\Claude\civicpermit`
 - Mode: release-gate
 - Local vs live: local branch `release/civicpermit-v1-public-use`, started from `origin/main` `9b3db542a45f1c357e8ff820c6a9c99920fd5b3f`
 - Pre-edit parity: local release branch was created from live `origin/main`

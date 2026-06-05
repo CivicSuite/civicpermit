@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-06-05T21:53:02.820Z",
+  "base": "http://127.0.0.1:18164",
+  "checks": [
+    {
+      "name": "public-desktop",
+      "status": 200,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "focused": "Skip to main content",
+      "title": "Accessory dwelling unit pre-application checklist",
+      "statusText": "Checklist loaded for staff-reviewed pre-application guidance.",
+      "materialCount": 4,
+      "overflow": false,
+      "consoleMessages": [],
+      "requestFailures": [],
+      "screenshot": "C:/dev/Claude/civicpermit/docs/qa/civicpermit-stage-2026-06-05/public-desktop.png"
+    },
+    {
+      "name": "public-mobile",
+      "status": 200,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "focused": "Skip to main content",
+      "title": "Accessory dwelling unit pre-application checklist",
+      "statusText": "Checklist loaded for staff-reviewed pre-application guidance.",
+      "materialCount": 4,
+      "overflow": false,
+      "consoleMessages": [],
+      "requestFailures": [],
+      "screenshot": "C:/dev/Claude/civicpermit/docs/qa/civicpermit-stage-2026-06-05/public-mobile.png"
+    },
+    {
+      "name": "api-/",
+      "status": 200,
+      "body": "{\"name\":\"CivicPermit\",\"version\":\"0.2.2\",\"status\":\"v1 permit pre-application and intake-readiness runtime\",\"message\":\"CivicPermit package, API foundation, configurable permit requirement records, database-backed intake records, staff review queues, development-review context packets, intake-readiness review, submittal outline helper, records-ready export checklist, readiness gate, and public lookup UI are online; permit approvals, official completeness determinations, fee calculations, inspections, live GIS, live LLM calls, and permitting-system-of-record writeback are not implemented.\",\"next_step\":\"Configure CIVICPERMIT_INTAKE_DB_URL, load local permit requirements, and verify /ready before public use.\"}"
+    },
+    {
+      "name": "api-/health",
+      "status": 200,
+      "body": "{\"status\":\"ok\",\"service\":\"civicpermit\",\"version\":\"0.2.2\",\"civiccore_version\":\"1.2.0\"}"
+    },
+    {
+      "name": "api-/ready",
+      "status": 200,
+      "body": "{\"status\":\"not-ready\",\"ready\":false,\"intake_database_configured\":false,\"schema_ready\":false,\"schema_version\":null,\"expected_schema_version\":null,\"requirement_count\":0,\"blockers\":[\"Set CIVICPERMIT_INTAKE_DB_URL to a local permit intake database.\",\"Load adopted local permit requirement records before public use.\"]}"
+    },
+    {
+      "name": "api-/api/v1/civicpermit/readiness",
+      "status": 200,
+      "body": "{\"status\":\"not-ready\",\"ready\":false,\"intake_database_configured\":false,\"schema_ready\":false,\"schema_version\":null,\"expected_schema_version\":null,\"requirement_count\":0,\"blockers\":[\"Set CIVICPERMIT_INTAKE_DB_URL to a local permit intake database.\",\"Load adopted local permit requirement records before public use.\"]}"
+    },
+    {
+      "name": "api-requirement-lookup",
+      "status": 200,
+      "body": {
+        "requirement_id": "permit-commercial-tenant-2.0",
+        "project_type": "commercial",
+        "title": "Commercial tenant improvement intake checklist",
+        "citation": "Sample Building Division Intake Guide, Tenant Improvements",
+        "required_materials": [
+          "Floor plan and life-safety plan.",
+          "Scope-of-work narrative.",
+          "Contractor license information if known.",
+          "Accessibility-impact statement for public-facing areas."
+        ],
+        "staff_note": "Confirm whether fire prevention, health, or public works review is required.",
+        "disclaimer": "CivicPermit provides intake-support information only. It does not approve permits, calculate official fees, determine completeness, schedule inspections, or replace the permitting system of record."
+      }
+    },
+    {
+      "name": "api-invalid-lookup",
+      "status": 422,
+      "body": {
+        "detail": {
+          "message": "CivicPermit could not validate: project_type.",
+          "fix": "Send a JSON body that includes the required field names listed in the fields array, using strings for text inputs.",
+          "fields": [
+            "project_type"
+          ]
+        }
+      }
+    }
+  ]
+}
