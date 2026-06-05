@@ -2,7 +2,7 @@
 
 CivicPermit is the CivicSuite module for permit pre-application and development-review intake support.
 
-Current state: **v0.2.2 corrective demotion state - deterministic scaffold; no real AI layer, full frontend, Alembic migrations, real municipal data/search, or public-use gate. The previous v1.0.0 release was published in error. This narrow truth-repair release is no functional upgrade; it exists solely to supersede the false v1.0.0 release from 2026-05-21 in GitHub's Latest impression. The CivicCore pin is aligned to the current city-core platform.** This repo contains a FastAPI package aligned to the published CivicCore v1.2.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public sample UI at `/civicpermit`. See [docs/release-recovery-status.md](docs/release-recovery-status.md) for the local release gate, browser QA, and CI evidence.
+Current state: **v0.2.2 corrective demotion state - deterministic scaffold with local requirement CSV import; no real AI layer, full permit application frontend, Alembic migrations, live municipal system search, or public-use gate. The previous v1.0.0 release was published in error. This narrow truth-repair release is no functional upgrade; it exists solely to supersede the false v1.0.0 release from 2026-05-21 in GitHub's Latest impression. The CivicCore pin is aligned to the current city-core platform.** This repo contains a FastAPI package aligned to the published CivicCore v1.2.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public lookup UI at `/civicpermit`. See [docs/release-recovery-status.md](docs/release-recovery-status.md) for the local release gate, browser QA, and CI evidence.
 
 It does **not** ship permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit-system writeback, or system-of-record behavior.
 
@@ -16,7 +16,7 @@ It does **not** ship permit approvals, official completeness determinations, fee
 - Drafts submittal outlines that require staff review.
 - Builds records-ready export checklists that preserve inquiry, checklist, reviewer, queue, and generated-output provenance.
 - Validates local adversarial integration mocks for missing context, spoofed approvals, fee attempts, stale sources, and role spoofing.
-- Demonstrates a public pre-application intake UI at `/civicpermit`.
+- Provides a public pre-application lookup UI at `/civicpermit`.
 
 ## Developer Quickstart
 
@@ -44,7 +44,7 @@ bash scripts/verify-release.sh
 
 - `GET /` returns current module status and product boundary.
 - `GET /health` returns package and CivicCore version information.
-- `GET /civicpermit` returns the accessible public sample UI.
+- `GET /civicpermit` returns the accessible public lookup UI.
 - `POST /api/v1/civicpermit/requirements/lookup` returns a permit requirement checklist.
 - `POST /api/v1/civicpermit/context/development-review` returns review-required permit intake context with optional CivicZone/CivicCode context IDs.
 - `POST /api/v1/civicpermit/integrations/mock/development-review` validates local adversarial integration payloads.

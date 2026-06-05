@@ -148,7 +148,7 @@ async def validation_exception_handler(
 
 @app.get("/civicpermit", response_class=HTMLResponse)
 def public_civicpermit_page() -> str:
-    """Return the public sample permit pre-application UI."""
+    """Return the public permit pre-application lookup UI."""
 
     return render_public_lookup_page()
 

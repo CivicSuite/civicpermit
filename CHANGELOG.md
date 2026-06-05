@@ -38,6 +38,7 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 ### Added
 
 - Local permit requirement CSV importer with fail-before-write validation and idempotent row updates.
+- Public `/civicpermit` lookup form wired to the requirement lookup API.
 
 ## [0.2.1] - 2026-05-21
 
