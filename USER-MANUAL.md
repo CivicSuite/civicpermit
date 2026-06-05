@@ -4,13 +4,13 @@
 
 CivicPermit helps cities give applicants clearer pre-application guidance before a formal permit submittal. It can show requirement context, highlight missing or unclear intake materials for staff review, route deficient persisted intakes to a staff-only queue, and produce records-ready permit-intake exports.
 
-Current state: v0.2.2 corrective demotion state. The previous v1.0.0 release was published in error. This narrow truth-repair release is no functional upgrade; it exists solely to supersede the false v1.0.0 release from 2026-05-21 in GitHub's Latest impression, with the CivicCore pin unchanged. The module includes deterministic sample checks, optional database-backed requirement and intake records, staff review queue workflows, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, CivicCore v1.1.0 release-wheel alignment, staff-only persisted intake create/read routes, and a public sample UI at `/civicpermit`.
+Current state: v0.2.2 corrective demotion state. The previous v1.0.0 release was published in error. This narrow truth-repair release is no functional upgrade; it exists solely to supersede the false v1.0.0 release from 2026-05-21 in GitHub's Latest impression, with the CivicCore pin aligned to the current city-core platform. The module includes deterministic sample checks, optional database-backed requirement and intake records, staff review queue workflows, review-required CivicZone/CivicCode context packet support, adversarial local integration mocks, CivicCore v1.2.0 release-wheel alignment, staff-only persisted intake create/read routes, and a public sample UI at `/civicpermit`.
 
 CivicPermit does not provide legal advice, permit approvals, official completeness determinations, fee calculations, inspections, live GIS, live LLM calls, permit-system writeback, or final staff approval.
 
 ## For IT And Technical Staff
 
-CivicPermit is a FastAPI Python package pinned to the published `CivicCore v1.1.0` release wheel. The current runtime exposes:
+CivicPermit is a FastAPI Python package pinned to the published `CivicCore v1.2.0` release wheel. The current runtime exposes:
 
 - `GET /`
 - `GET /health`
@@ -32,7 +32,7 @@ Set `CIVICPERMIT_INTAKE_DB_URL` to persist permit requirement, intake review, an
 Run local verification with:
 
 ```powershell
-python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.1.0/civiccore-1.1.0-py3-none-any.whl
+python -m pip install https://github.com/CivicSuite/civiccore/releases/download/v1.2.0/civiccore-1.2.0-py3-none-any.whl
 python -m pip install -e ".[dev]"
 python -m pytest -q
 bash scripts/verify-release.sh
@@ -43,7 +43,7 @@ bash scripts/verify-release.sh
 ```mermaid
 flowchart LR
   PublicUser["Resident or permit-counter staff"] --> CivicPermit["CivicPermit v0.2.2"]
-  CivicPermit --> CivicCore["CivicCore v1.1.0"]
+  CivicPermit --> CivicCore["CivicCore v1.2.0"]
   CivicPermit -. released-context .-> CivicZone["CivicZone context"]
   CivicPermit -. released-context .-> CivicCode["CivicCode context"]
 ```

@@ -5,7 +5,7 @@
 - Narrow truth-repair release. No functional upgrade.
 - Exists solely to supersede the false v1.0.0 release from 2026-05-21 in
   GitHub's Latest impression.
-- CivicCore pin unchanged.
+- CivicCore pin aligned to the current city-core platform.
 
 ## [1.0.0] - 2026-05-21
 
@@ -14,6 +14,7 @@
 - Promoted CivicPermit to an honest v1.0.0 public-use module release after the active-module recovery gate.
 - Synchronized package metadata, release verifier, public UI, docs, tests, browser QA evidence, release-gate audit evidence, and GitHub release workflow around the CivicCore v1.1.0 wheel pin.
 - Preserved the product boundary: CivicPermit supports permit pre-application and intake readiness, but does not approve permits, make official completeness determinations, calculate official fees, schedule inspections, call live GIS/LLM systems, write back to a permitting system, or act as a system of record.
+- Aligned the active stage branch to the CivicCore v1.2.0 release wheel and SHA256.
 
 ## [0.2.0] - 2026-05-11
 

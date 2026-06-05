@@ -7,7 +7,7 @@ Repo: `CivicSuite/civicpermit`
 
 `v1.0.0` exists as a published label. The suite release-recovery pass has now
 rechecked the repo with the local release gate, live browser QA, documentation
-truth checks, build artifacts, and current CivicCore v1.1.0 dependency
+truth checks, build artifacts, and current CivicCore v1.2.0 dependency
 alignment. The original release date remains historical; this file records the
 fresh recovery evidence.
 
@@ -17,7 +17,7 @@ fresh recovery evidence.
 | --- | --- | --- |
 | Public claim recovery | Passing locally | README, text README, user manual, docs landing page, changelog, and docs checks now describe the v1.0.0 corrective demotion state without overstating permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit-system writeback, or system-of-record behavior. |
 | Native WSL/Linux proof | Historical pass | WSL selected `.venv-wsl/bin/python3`, reported platform `linux`, and completed `VERIFY-RELEASE: PASSED`. |
-| Runtime install proof | Historical pass | Fresh WSL editable install succeeded with the published CivicCore v1.1.0 release wheel and Hatch direct references enabled. |
+| Runtime install proof | Historical pass | Fresh WSL editable install succeeded with the then-current published CivicCore v1.1.0 release wheel and Hatch direct references enabled. The active stage branch now aligns to CivicCore v1.2.0. |
 | Security scan | Historical pass | Tracked-file secret scan returned no matches. |
 | Docs-source enforcement | Passing locally | `scripts/verify-docs.sh` blocks stale product-release claims. |
 | Mock-vs-production labeling | Passing locally | Existing docs distinguish local adversarial mocks, no legal advice, no permit approvals, and no live external calls by default. |
