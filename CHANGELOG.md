@@ -35,6 +35,10 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 ## [Unreleased]
 
+### Added
+
+- Local permit requirement CSV importer with fail-before-write validation and idempotent row updates.
+
 ## [0.2.1] - 2026-05-21
 
 ### Corrected

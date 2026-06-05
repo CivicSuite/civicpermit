@@ -146,6 +146,51 @@ class PermitIntakeRepository:
                     )
                 )
 
+    def upsert_requirement(self, *, project_type_key: str, requirement: PermitRequirement) -> None:
+        normalized_key = project_type_key.strip().casefold()
+        if normalized_key == "":
+            raise ValueError("project_type_key is required.")
+        now = datetime.now(UTC)
+        values = {
+            "project_type_key": normalized_key,
+            "project_type": requirement.project_type,
+            "title": requirement.title,
+            "citation": requirement.citation,
+            "required_materials": list(requirement.required_materials),
+            "staff_note": requirement.staff_note,
+            "disclaimer": requirement.disclaimer,
+            "updated_at": now,
+        }
+        with self.engine.begin() as connection:
+            exists = connection.execute(
+                sa.select(permit_requirement_records.c.requirement_id).where(
+                    permit_requirement_records.c.requirement_id == requirement.requirement_id
+                )
+            ).first()
+            if exists is None:
+                connection.execute(
+                    permit_requirement_records.insert().values(
+                        requirement_id=requirement.requirement_id,
+                        created_at=now,
+                        **values,
+                    )
+                )
+                return
+            connection.execute(
+                permit_requirement_records.update()
+                .where(permit_requirement_records.c.requirement_id == requirement.requirement_id)
+                .values(**values)
+            )
+
+    def list_requirements(self) -> tuple[PermitRequirement, ...]:
+        with self.engine.begin() as connection:
+            rows = connection.execute(
+                sa.select(permit_requirement_records).order_by(
+                    permit_requirement_records.c.requirement_id
+                )
+            ).mappings()
+        return tuple(_row_to_requirement(row) for row in rows)
+
     def lookup_requirement(self, *, project_type: str, location_context: str = "") -> PermitRequirement:
         requirement, _source = self.lookup_requirement_with_source(
             project_type=project_type,

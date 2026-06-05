@@ -19,6 +19,9 @@ dependencies = [
   "uvicorn[standard]>=0.30.0,<1.0.0",
 ]
 
+[project.scripts]
+civicpermit-import-requirements = "civicpermit.data_import:main"
+
 [project.optional-dependencies]
 dev = [
   "build>=1.2.0,<2.0.0",

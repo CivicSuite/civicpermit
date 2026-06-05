@@ -9,7 +9,7 @@ It does **not** ship permit approvals, official completeness determinations, fee
 ## What CivicPermit Does
 
 - Looks up permit requirement checklists for common applicant scenarios.
-- Supports locally configured requirement records through `CIVICPERMIT_INTAKE_DB_URL`.
+- Imports locally configured requirement records from CSV into `CIVICPERMIT_INTAKE_DB_URL`.
 - Returns review-required development-review context packets that can carry CivicZone and CivicCode context IDs without calling those systems live.
 - Flags missing or unclear intake materials while keeping permit-counter staff responsible for official completeness review.
 - Creates staff-only review queue items for persisted deficient intakes.
@@ -58,6 +58,8 @@ bash scripts/verify-release.sh
 - `POST /api/v1/civicpermit/export` returns a records-ready permit-intake export checklist.
 
 Set `CIVICPERMIT_INTAKE_DB_URL` to enable persistent permit requirement, intake review, and staff review queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff workflow. CivicPermit uses CivicCore `staff_key_gate` for timing-safe key comparison. When unset, CivicPermit continues to use deterministic in-memory sample data for public applicant guidance.
+
+Local permit requirement CSVs can be imported with the `civicpermit-import-requirements` console script. See [docs/local-requirement-import.md](docs/local-requirement-import.md) for the required columns, idempotent update behavior, and fail-before-write validation rules.
 
 ## License
 
