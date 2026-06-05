@@ -1,8 +1,11 @@
+import subprocess
+import sys
+
 from fastapi.testclient import TestClient
 
 import civicpermit.main as main_module
 from civicpermit.main import app
-from civicpermit.persistence import PermitIntakeRepository
+from civicpermit.persistence import SCHEMA_VERSION, PermitIntakeRepository
 from civicpermit.requirement_lookup import PermitRequirement
 
 
@@ -32,6 +35,42 @@ def test_requirement_and_intake_records_persist(tmp_path) -> None:
     assert reloaded_intake.status == "ready-for-staff-triage"
     assert reloaded_intake.missing_or_unclear == ()
     db_path.unlink()
+
+
+def test_intake_repository_records_schema_status(tmp_path) -> None:
+    db_path = tmp_path / "schema-status.db"
+    repository = PermitIntakeRepository(db_url=f"sqlite:///{db_path}", seed_defaults=False)
+    try:
+        status = repository.schema_status()
+    finally:
+        repository.engine.dispose()
+
+    assert status.ready is True
+    assert status.schema_version == SCHEMA_VERSION
+    assert status.expected_schema_version == SCHEMA_VERSION
+    assert status.missing_tables == ()
+    assert status.dialect == "sqlite"
+
+
+def test_db_status_cli_reports_ready_schema(tmp_path) -> None:
+    db_path = tmp_path / "schema-cli.db"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "civicpermit.db_admin",
+            "--db-url",
+            f"sqlite:///{db_path}",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "CivicPermit schema ready" in result.stdout
+    assert f"version={SCHEMA_VERSION}" in result.stdout
+    assert "missing_tables=none" in result.stdout
 
 
 def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
@@ -76,6 +115,75 @@ def test_api_uses_configured_intake_database(monkeypatch, tmp_path) -> None:
     assert get_response.json()["status"] == "ready-for-staff-triage"
     assert get_response.json()["staff_review_id"] is None
     db_path.unlink()
+
+
+def test_readiness_requires_configured_intake_database() -> None:
+    response = client.get("/api/v1/civicpermit/readiness")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "not-ready"
+    assert payload["ready"] is False
+    assert payload["intake_database_configured"] is False
+    assert "Set CIVICPERMIT_INTAKE_DB_URL" in payload["blockers"][0]
+
+
+def test_configured_runtime_does_not_seed_sample_requirements(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "empty-runtime.db"
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", f"sqlite:///{db_path}")
+
+    try:
+        response = client.get("/ready")
+        repository = main_module._get_intake_repository()
+        requirements = repository.list_requirements()
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "not-ready"
+    assert payload["schema_ready"] is True
+    assert payload["requirement_count"] == 0
+    assert "Load adopted local permit requirement records" in payload["blockers"][0]
+    assert requirements == ()
+
+
+def test_readiness_passes_with_loaded_local_requirements(monkeypatch, tmp_path) -> None:
+    db_path = tmp_path / "ready-runtime.db"
+    db_url = f"sqlite:///{db_path}"
+    repository = PermitIntakeRepository(db_url=db_url, seed_defaults=False)
+    repository.upsert_requirement(
+        project_type_key="solar canopy",
+        requirement=PermitRequirement(
+            requirement_id="permit-solar-canopy-1.0",
+            project_type="solar-canopy",
+            title="Solar canopy intake checklist",
+            citation="Building Intake Guide, Solar Canopy Checklist",
+            required_materials=(
+                "Structural drawings.",
+                "Electrical one-line diagram.",
+            ),
+            staff_note="Route structural and electrical review before formal intake.",
+        ),
+    )
+    repository.engine.dispose()
+    monkeypatch.setenv("CIVICPERMIT_INTAKE_DB_URL", db_url)
+
+    try:
+        response = client.get("/api/v1/civicpermit/readiness")
+    finally:
+        main_module._dispose_intake_repository()
+        main_module._intake_db_url = None
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "ready"
+    assert payload["ready"] is True
+    assert payload["intake_database_configured"] is True
+    assert payload["schema_ready"] is True
+    assert payload["requirement_count"] == 1
+    assert payload["blockers"] == []
 
 
 def test_persisted_intake_with_missing_materials_creates_staff_review_queue(monkeypatch, tmp_path) -> None:

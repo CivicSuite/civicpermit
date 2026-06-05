@@ -2,7 +2,7 @@
 
 CivicPermit is the CivicSuite module for permit pre-application and development-review intake support.
 
-Current state: **v0.2.2 corrective demotion state - deterministic scaffold with local requirement CSV import; no real AI layer, full permit application frontend, Alembic migrations, live municipal system search, or public-use gate. The previous v1.0.0 release was published in error. This narrow truth-repair release is no functional upgrade; it exists solely to supersede the false v1.0.0 release from 2026-05-21 in GitHub's Latest impression. The CivicCore pin is aligned to the current city-core platform.** This repo contains a FastAPI package aligned to the published CivicCore v1.2.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public lookup UI at `/civicpermit`. See [docs/release-recovery-status.md](docs/release-recovery-status.md) for the local release gate, browser QA, and CI evidence.
+Current state: **v0.2.2 corrective demotion state - deterministic scaffold with local requirement CSV import, schema status, and readiness gates; no real AI layer, full permit application frontend, Alembic migrations, live municipal system search, or public-use gate. The previous v1.0.0 release was published in error. This narrow truth-repair release is no functional upgrade; it exists solely to supersede the false v1.0.0 release from 2026-05-21 in GitHub's Latest impression. The CivicCore pin is aligned to the current city-core platform.** This repo contains a FastAPI package aligned to the published CivicCore v1.2.0 release wheel, health/root endpoints, documentation gates, deterministic and database-backed permit requirement lookup, staff-gated persisted intake records, staff review queues, review-required CivicZone/CivicCode context packets, adversarial local integration mocks, intake-readiness review, submittal outline support, records-ready export checklist, and accessible public lookup UI at `/civicpermit`. See [docs/release-recovery-status.md](docs/release-recovery-status.md) for the local release gate, browser QA, and CI evidence.
 
 It does **not** ship permit approvals, official completeness determinations, fee calculations, inspections, legal advice, live GIS, live LLM calls, permit-system writeback, or system-of-record behavior.
 
@@ -10,6 +10,7 @@ It does **not** ship permit approvals, official completeness determinations, fee
 
 - Looks up permit requirement checklists for common applicant scenarios.
 - Imports locally configured requirement records from CSV into `CIVICPERMIT_INTAKE_DB_URL`.
+- Reports whether local schema and requirement records are ready through `/ready`.
 - Returns review-required development-review context packets that can carry CivicZone and CivicCode context IDs without calling those systems live.
 - Flags missing or unclear intake materials while keeping permit-counter staff responsible for official completeness review.
 - Creates staff-only review queue items for persisted deficient intakes.
@@ -44,6 +45,7 @@ bash scripts/verify-release.sh
 
 - `GET /` returns current module status and product boundary.
 - `GET /health` returns package and CivicCore version information.
+- `GET /ready` and `GET /api/v1/civicpermit/readiness` report whether local permit data is configured, schema-ready, and loaded before public use.
 - `GET /civicpermit` returns the accessible public lookup UI.
 - `POST /api/v1/civicpermit/requirements/lookup` returns a permit requirement checklist.
 - `POST /api/v1/civicpermit/context/development-review` returns review-required permit intake context with optional CivicZone/CivicCode context IDs.
@@ -57,9 +59,11 @@ bash scripts/verify-release.sh
 - `POST /api/v1/civicpermit/submittal/outline` returns a review-required submittal outline.
 - `POST /api/v1/civicpermit/export` returns a records-ready permit-intake export checklist.
 
-Set `CIVICPERMIT_INTAKE_DB_URL` to enable persistent permit requirement, intake review, and staff review queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff workflow. CivicPermit uses CivicCore `staff_key_gate` for timing-safe key comparison. When unset, CivicPermit continues to use deterministic in-memory sample data for public applicant guidance.
+Set `CIVICPERMIT_INTAKE_DB_URL` to enable persistent permit requirement, intake review, and staff review queue records. Persisted staff routes require `CIVICPERMIT_STAFF_API_KEY`, `X-CivicPermit-Role: staff`, and matching `X-CivicPermit-Staff-Key` from a trusted staff workflow. CivicPermit uses CivicCore `staff_key_gate` for timing-safe key comparison. When unset, CivicPermit continues to use deterministic in-memory sample data for public applicant guidance. When set, the runtime initializes schema without seeding sample requirements; `/ready` remains `not-ready` until local permit requirements are loaded.
 
 Local permit requirement CSVs can be imported with the `civicpermit-import-requirements` console script. See [docs/local-requirement-import.md](docs/local-requirement-import.md) for the required columns, idempotent update behavior, and fail-before-write validation rules.
+
+Use the `civicpermit-db-status` console script with the same SQLAlchemy URL to initialize and verify the local CivicPermit schema before pointing the runtime at an intake database.
 
 ## License
 

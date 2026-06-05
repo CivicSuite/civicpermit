@@ -31,6 +31,7 @@ required=(
   "pyproject.toml"
   "civicpermit/__init__.py"
   "civicpermit/data_import.py"
+  "civicpermit/db_admin.py"
   "civicpermit/main.py"
   "civicpermit/persistence.py"
   "civicpermit/requirement_lookup.py"

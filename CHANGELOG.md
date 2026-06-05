@@ -39,6 +39,7 @@ The format follows Keep a Changelog, and this project follows Semantic Versionin
 
 - Local permit requirement CSV importer with fail-before-write validation and idempotent row updates.
 - Public `/civicpermit` lookup form wired to the requirement lookup API.
+- Local schema status CLI and `/ready` readiness gates that require configured local permit requirements instead of sample fallback.
 
 ## [0.2.1] - 2026-05-21
 

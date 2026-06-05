@@ -15,6 +15,8 @@ from civicpermit.requirement_lookup import REQUIREMENTS, PermitRequirement, look
 
 metadata = sa.MetaData()
 
+SCHEMA_VERSION = "2026-06-05-001"
+
 permit_requirement_records = sa.Table(
     "permit_requirement_records",
     metadata,
@@ -62,6 +64,14 @@ staff_review_queue_records = sa.Table(
     schema="civicpermit",
 )
 
+schema_migrations = sa.Table(
+    "schema_migrations",
+    metadata,
+    sa.Column("schema_version", sa.String(40), primary_key=True),
+    sa.Column("applied_at", sa.DateTime(timezone=True), nullable=False),
+    schema="civicpermit",
+)
+
 
 OPEN_STAFF_REVIEW_STATUSES = {"open", "in_review"}
 RESOLVED_STAFF_REVIEW_STATUSES = {"resolved", "closed"}
@@ -105,6 +115,15 @@ class StaffReviewSummary:
     visibility: str = "staff_only"
 
 
+@dataclass(frozen=True)
+class SchemaStatus:
+    schema_version: str | None
+    expected_schema_version: str
+    ready: bool
+    missing_tables: tuple[str, ...]
+    dialect: str
+
+
 class PermitIntakeRepository:
     """SQLAlchemy-backed permit requirement and intake-readiness records."""
 
@@ -116,9 +135,55 @@ class PermitIntakeRepository:
             self.engine = base_engine
             with self.engine.begin() as connection:
                 connection.execute(sa.text("CREATE SCHEMA IF NOT EXISTS civicpermit"))
-        metadata.create_all(self.engine)
+        self.migrate()
         if seed_defaults:
             self.seed_requirements(REQUIREMENTS.items())
+
+    def migrate(self) -> SchemaStatus:
+        """Apply non-destructive local schema setup and return the resulting status."""
+
+        metadata.create_all(self.engine)
+        with self.engine.begin() as connection:
+            exists = connection.execute(
+                sa.select(schema_migrations.c.schema_version).where(
+                    schema_migrations.c.schema_version == SCHEMA_VERSION
+                )
+            ).first()
+            if exists is None:
+                connection.execute(
+                    schema_migrations.insert().values(
+                        schema_version=SCHEMA_VERSION,
+                        applied_at=datetime.now(UTC),
+                    )
+                )
+        return self.schema_status()
+
+    def schema_status(self) -> SchemaStatus:
+        inspector = sa.inspect(self.engine)
+        translated_schema = None if self.engine.dialect.name == "sqlite" else "civicpermit"
+        available_tables = set(inspector.get_table_names(schema=translated_schema))
+        expected_tables = {
+            "permit_requirement_records",
+            "intake_review_records",
+            "staff_review_queue_records",
+            "schema_migrations",
+        }
+        missing_tables = tuple(sorted(expected_tables - available_tables))
+        schema_version = None
+        if "schema_migrations" not in missing_tables:
+            with self.engine.begin() as connection:
+                schema_version = connection.execute(
+                    sa.select(schema_migrations.c.schema_version)
+                    .order_by(schema_migrations.c.applied_at.desc())
+                    .limit(1)
+                ).scalar_one_or_none()
+        return SchemaStatus(
+            schema_version=schema_version,
+            expected_schema_version=SCHEMA_VERSION,
+            ready=schema_version == SCHEMA_VERSION and not missing_tables,
+            missing_tables=missing_tables,
+            dialect=self.engine.dialect.name,
+        )
 
     def seed_requirements(self, requirements: Iterable[tuple[str, PermitRequirement]]) -> None:
         now = datetime.now(UTC)

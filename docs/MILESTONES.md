@@ -23,6 +23,7 @@ Permit-intake export checklist and provenance notes.
 ## Milestone 6 - Public UI
 
 Accessible public lookup page at `/civicpermit`.
+Local schema status and readiness gates at `/ready`.
 
 ## Milestone 7 - v0.1.0 Release
 

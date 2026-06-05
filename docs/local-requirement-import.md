@@ -6,6 +6,8 @@ CivicPermit can load local municipal permit requirement CSV exports into the con
 
 Use the same SQLAlchemy URL that the runtime reads from `CIVICPERMIT_INTAKE_DB_URL`. The importer creates requirement tables if needed and does not seed sample requirements.
 
+Before importing, use the same URL with `civicpermit-db-status` to create the local schema non-destructively and confirm the expected schema version is recorded.
+
 ## CSV Contract
 
 Required columns:

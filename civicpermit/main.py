@@ -99,11 +99,11 @@ def root() -> dict[str, str]:
             "CivicPermit package, API foundation, configurable permit requirement records, "
             "database-backed intake records, staff review queues, development-review context "
             "packets, intake-readiness review, submittal outline helper, records-ready export "
-            "checklist, and public UI foundation are online; permit approvals, official "
+            "checklist, readiness gate, and public lookup UI are online; permit approvals, official "
             "completeness determinations, fee calculations, inspections, live GIS, live LLM "
             "calls, and permitting-system-of-record writeback are not implemented."
         ),
-        "next_step": "Configure local permit requirement data and route official determinations to municipal staff.",
+        "next_step": "Configure CIVICPERMIT_INTAKE_DB_URL, load local permit requirements, and verify /ready before public use.",
     }
 
 
@@ -117,6 +117,20 @@ def health() -> dict[str, str]:
         "version": __version__,
         "civiccore_version": CIVICCORE_VERSION,
     }
+
+
+@app.get("/ready")
+def ready() -> dict[str, object]:
+    """Return public-use readiness without treating sample fallback as customer data."""
+
+    return _readiness_payload()
+
+
+@app.get("/api/v1/civicpermit/readiness")
+def readiness() -> dict[str, object]:
+    """Return detailed CivicPermit local-data readiness for installers and operators."""
+
+    return _readiness_payload()
 
 
 @app.exception_handler(RequestValidationError)
@@ -377,7 +391,7 @@ def _get_intake_repository() -> PermitIntakeRepository:
     if _intake_repository is None or db_url != _intake_db_url:
         _dispose_intake_repository()
         _intake_db_url = db_url
-        _intake_repository = PermitIntakeRepository(db_url=db_url)
+        _intake_repository = PermitIntakeRepository(db_url=db_url, seed_defaults=False)
     return _intake_repository
 
 
@@ -423,6 +437,44 @@ def _lookup_permit_requirement_with_source(*, project_type: str, location_contex
         project_type=project_type,
         location_context=location_context,
     )
+
+
+def _readiness_payload() -> dict[str, object]:
+    db_url = _intake_database_url()
+    if db_url is None:
+        return {
+            "status": "not-ready",
+            "ready": False,
+            "intake_database_configured": False,
+            "schema_ready": False,
+            "schema_version": None,
+            "expected_schema_version": None,
+            "requirement_count": 0,
+            "blockers": [
+                "Set CIVICPERMIT_INTAKE_DB_URL to a local permit intake database.",
+                "Load adopted local permit requirement records before public use.",
+            ],
+        }
+
+    repository = _get_intake_repository()
+    schema_status = repository.schema_status()
+    requirements = repository.list_requirements()
+    blockers: list[str] = []
+    if not schema_status.ready:
+        blockers.append("Run the local CivicPermit schema status/migration check.")
+    if not requirements:
+        blockers.append("Load adopted local permit requirement records before public use.")
+    ready_for_public_use = not blockers
+    return {
+        "status": "ready" if ready_for_public_use else "not-ready",
+        "ready": ready_for_public_use,
+        "intake_database_configured": True,
+        "schema_ready": schema_status.ready,
+        "schema_version": schema_status.schema_version,
+        "expected_schema_version": schema_status.expected_schema_version,
+        "requirement_count": len(requirements),
+        "blockers": blockers,
+    }
 
 
 def _stored_intake_response(

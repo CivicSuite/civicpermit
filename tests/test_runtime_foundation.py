@@ -39,7 +39,7 @@ def test_root_endpoint_states_runtime_boundary() -> None:
     assert "staff review queues" in payload["message"]
     assert "permit approvals" in payload["message"]
     assert "not implemented" in payload["message"]
-    assert payload["next_step"].startswith("Configure local permit requirement data")
+    assert "verify /ready" in payload["next_step"]
 
 
 def test_health_endpoint_reports_versions() -> None:
